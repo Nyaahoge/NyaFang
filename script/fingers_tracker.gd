@@ -1,7 +1,5 @@
 extends Node2D
 
-@onready var mf_objects: Node2D = $"../../MfObjects"##(要删掉)
-
 
 @onready var mf_objects_priority: Node = $"../MfObjectsPriority"
 @onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
@@ -16,11 +14,7 @@ func _input(event: InputEvent) -> void:
 	
 func _physics_process(delta: float) -> void:
 	hold_action_fingers_states()
-	if mf_objects.get_children().size() > 0:
-		if is_in_mf_object(get_global_mouse_position(), mf_objects.get_children()[0]):
-			print((get_global_mouse_position() - mf_objects.get_children()[0].path_follow_2d.position).rotated(- mf_objects.get_children()[0].shape.rotation_degrees))
-			
-
+	print(mf_objects_priority.tap_in_or_hold_in_mf_objects_priority)
 
 
 
@@ -110,6 +104,6 @@ func hold_action_fingers_states():
 	#is_in_mf_object()
 	pass
 
-func is_in_mf_object(pos: Vector2, mf_obj: MfObject) -> bool:
+func is_in_mf_object(pos: Vector2, mf_obj: MfObject) -> bool:##（重要）判断一个 世界坐标 是否在一个 MfObject 里。用于检测手指是否碰到MfObject。
 	var mf_obj_pos = (pos - mf_obj.path_follow_2d.position).rotated(deg_to_rad(- mf_obj.shape.rotation_degrees))
 	return - mf_obj.curve_size.x / 2 <= mf_obj_pos.x  && mf_obj_pos.x <= mf_obj.curve_size.x / 2 && - mf_obj.curve_size.y / 2 <= mf_obj_pos.y && mf_obj_pos.y <= mf_obj.curve_size.y / 2
