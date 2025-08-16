@@ -1,5 +1,7 @@
 extends Node2D
 
+@onready var mf_objects: Node2D = $"../../MfObjects"##(要删掉)
+
 
 @onready var mf_objects_priority: Node = $"../MfObjectsPriority"
 @onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
@@ -14,7 +16,10 @@ func _input(event: InputEvent) -> void:
 	
 func _physics_process(delta: float) -> void:
 	hold_action_fingers_states()
-
+	if mf_objects.get_children().size() > 0:
+		if is_in_mf_object(get_global_mouse_position(), mf_objects.get_children()[0]):
+			print((get_global_mouse_position() - mf_objects.get_children()[0].path_follow_2d.position).rotated(- mf_objects.get_children()[0].shape.rotation_degrees))
+			
 
 
 
@@ -64,15 +69,28 @@ func tap_action_fingers_states(event: InputEvent):
 			while i < mf_objects_priority.tap_in_or_hold_in_mf_objects_priority.size():
 				var mf_obj = mf_objects_priority.tap_in_or_hold_in_mf_objects_priority[i]
 				if is_in_mf_object(event.position, mf_obj):
-					pass
+					print("in")
+					mf_objects_priority.remove_from_priority(mf_obj)
+					mf_obj.hit_jugement(track_player.thread_track_player_position)
 					break
+				i += 1
 	
 	
 	
 	##PC端（调试）
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			print("鼠标左键按下")
+	if OS.get_name() == "Windows":
+		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				print("鼠标左键按下")
+				var i: int = 0#（临时）
+				while i < mf_objects_priority.tap_in_or_hold_in_mf_objects_priority.size():
+					var mf_obj = mf_objects_priority.tap_in_or_hold_in_mf_objects_priority[i]
+					if is_in_mf_object(event.position, mf_obj):
+						print("in")
+						mf_objects_priority.remove_from_priority(mf_obj)
+						mf_obj.hit_jugement(track_player.thread_track_player_position)
+						break
+					i += 1
 	
 	
 	
@@ -93,9 +111,5 @@ func hold_action_fingers_states():
 	pass
 
 func is_in_mf_object(pos: Vector2, mf_obj: MfObject) -> bool:
-	var mf_obj_pos = (pos - mf_obj.path_follow_2d.position).rotated(- mf_obj.shape.rotation_degrees)
-	if pos.x >= - mf_obj.curve_size.x && pos.x <= mf_obj.curve_size.x && pos.y >= - mf_obj.curve_size.y && pos.y <= mf_obj.curve_size.y:
-		mf_obj.hit_jugement(track_player.thread_track_player_position)
-		return true
-	else:
-		return false
+	var mf_obj_pos = (pos - mf_obj.path_follow_2d.position).rotated(deg_to_rad(- mf_obj.shape.rotation_degrees))
+	return - mf_obj.curve_size.x / 2 <= mf_obj_pos.x  && mf_obj_pos.x <= mf_obj.curve_size.x / 2 && - mf_obj.curve_size.y / 2 <= mf_obj_pos.y && mf_obj_pos.y <= mf_obj.curve_size.y / 2
