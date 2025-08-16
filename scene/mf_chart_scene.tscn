@@ -1,0 +1,58 @@
+[gd_scene load_steps=13 format=3 uid="uid://c1hf2xyw7njed"]
+
+[ext_resource type="Script" uid="uid://bk5d63waayjou" path="res://script/mf_chart_scene.gd" id="1_lhj4b"]
+[ext_resource type="PackedScene" uid="uid://cax361xfekpsd" path="res://jsonfileoperators/json_file_operator.tscn" id="2_7fuv5"]
+[ext_resource type="Script" uid="uid://crlg13yp0bl5u" path="res://script/chart_view.gd" id="2_55nvt"]
+[ext_resource type="AudioStream" uid="uid://dl4qdxf4dw1qk" path="res://assets/Tracks/PiPinkary - Autumn beauty.mp3" id="2_afjcj"]
+[ext_resource type="PackedScene" uid="uid://c2qhse11rvirg" path="res://scene/mf_object.tscn" id="3_afjcj"]
+[ext_resource type="Script" uid="uid://btp1l3ct00mqm" path="res://scene/mf_objects_priority.gd" id="5_ggmc3"]
+[ext_resource type="Script" uid="uid://bny3n7l4o72dr" path="res://script/mf_objects_lifecycle.gd" id="6_mf01k"]
+[ext_resource type="Script" uid="uid://c0xewi7oy03hd" path="res://script/track_player.gd" id="6_xb0a0"]
+[ext_resource type="Script" uid="uid://p22cil5otfpf" path="res://script/mf_object_pool.gd" id="7_xb0a0"]
+[ext_resource type="Script" uid="uid://bafp42p07ox1j" path="res://script/player.gd" id="8_b2fbt"]
+[ext_resource type="Script" uid="uid://dpuga1esqjkj8" path="res://script/game.gd" id="8_qkehe"]
+[ext_resource type="Script" uid="uid://rpuvkawqe7fl" path="res://script/fingers_tracker.gd" id="10_h35d7"]
+
+[node name="MfChartScene" type="Node2D"]
+script = ExtResource("1_lhj4b")
+
+[node name="Game" type="Node2D" parent="."]
+script = ExtResource("8_qkehe")
+latency_adjustment = 2.0
+
+[node name="Player" type="Node" parent="Game"]
+script = ExtResource("8_b2fbt")
+
+[node name="FingersTracker" type="Node2D" parent="Game"]
+script = ExtResource("10_h35d7")
+
+[node name="MfObjectsPriority" type="Node" parent="Game"]
+script = ExtResource("5_ggmc3")
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Background"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="ChartView" type="Node2D" parent="."]
+script = ExtResource("2_55nvt")
+
+[node name="MfObjects" type="Node2D" parent="."]
+
+[node name="JsonFileOperator" parent="." instance=ExtResource("2_7fuv5")]
+file = "res://jsonfiles/j2.json"
+parse_or_save_to_json_file = true
+
+[node name="TrackPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_afjcj")
+script = ExtResource("6_xb0a0")
+
+[node name="MfObjectLifecycle" type="Node" parent="."]
+script = ExtResource("6_mf01k")
+
+[node name="MfObjectPool" type="Node" parent="."]
+script = ExtResource("7_xb0a0")
+obj_scene = ExtResource("3_afjcj")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]

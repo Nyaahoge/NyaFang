@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cax361xfekpsd"]
+
+[ext_resource type="Script" uid="uid://cnnek2x0llk1h" path="res://jsonfileoperators/json_file_operator.gd" id="1_txg3s"]
+
+[node name="JsonFileOperator" type="Node"]
+script = ExtResource("1_txg3s")
+is_work = true
+parse_or_save_to_json_file = false

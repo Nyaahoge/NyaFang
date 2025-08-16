@@ -1,0 +1,778 @@
+{
+  "max_mf_object_count": 4,
+  "mf_objects": [
+	{
+	  "MfObject_move_curve": {
+		"bake_interval": 5.0,
+		"points": [
+		  {
+			"in": {
+			  "x": -83.6363983154297,
+			  "y": 136.363998413086
+			},
+			"out": {
+			  "x": 83.6363983154297,
+			  "y": -136.363998413086
+			},
+			"position": {
+			  "x": -390.0,
+			  "y": -121.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -139.332992553711,
+			  "y": -185.380004882813
+			},
+			"out": {
+			  "x": 139.332992553711,
+			  "y": 185.380004882813
+			},
+			"position": {
+			  "x": 251.0,
+			  "y": -143.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 146.927001953125,
+			  "y": 26.3908996582031
+			},
+			"out": {
+			  "x": -146.927001953125,
+			  "y": -26.3908996582031
+			},
+			"position": {
+			  "x": 38.0,
+			  "y": 200.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 0.0,
+			  "y": 0.0
+			},
+			"out": {
+			  "x": 0.0,
+			  "y": 0.0
+			},
+			"position": {
+			  "x": 0.0,
+			  "y": 0.0
+			}
+		  }
+		]
+	  },
+	  "exist_period": {
+		"over": 10.0,
+		"start": 2.0
+	  },
+	  "hold_release_timing": [],
+	  "jugde_timing": [],
+	  "length_curve": {
+		"bake_resolution": 100,
+		"max_domain": 10.0,
+		"max_value": 180.0,
+		"min_domain": 2.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 2.0,
+			  "y": 180.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "mf_object_type": 0,
+	  "opacity_curve": {
+		"bake_resolution": 100,
+		"max_domain": 10.0,
+		"max_value": 1.0,
+		"min_domain": 2.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 2.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "progress_ratio_curve": {
+		"bake_resolution": 100,
+		"max_domain": 10.0,
+		"max_value": 1.0,
+		"min_domain": 2.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 2.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "rotation_curve": {
+		"bake_resolution": 100,
+		"max_domain": 10.0,
+		"max_value": 2000.0,
+		"min_domain": 2.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 2.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 5.62214994430542,
+			  "y": 1213.16003417969
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 6.48207998275757,
+			  "y": 682.89501953125
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 2000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "width_curve": {
+		"bake_resolution": 100,
+		"max_domain": 10.0,
+		"max_value": 180.0,
+		"min_domain": 2.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 2.0,
+			  "y": 180.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  }
+	},
+	{
+	  "MfObject_move_curve": {
+		"bake_interval": 5.0,
+		"points": [
+		  {
+			"in": {
+			  "x": 197.0,
+			  "y": 387.200012207031
+			},
+			"out": {
+			  "x": -197.0,
+			  "y": -387.200012207031
+			},
+			"position": {
+			  "x": 514.0,
+			  "y": 97.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 117.599998474121,
+			  "y": -174.899993896484
+			},
+			"out": {
+			  "x": -117.599998474121,
+			  "y": 174.899993896484
+			},
+			"position": {
+			  "x": -354.0,
+			  "y": 157.0
+			}
+		  }
+		]
+	  },
+	  "exist_period": {
+		"over": 16.0,
+		"start": 5.0
+	  },
+	  "hold_release_timing": [],
+	  "jugde_timing": [],
+	  "length_curve": {
+		"bake_resolution": 100,
+		"max_domain": 16.0,
+		"max_value": 200.0,
+		"min_domain": 5.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 5.0,
+			  "y": 102.5
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 16.0,
+			  "y": 200.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "mf_object_type": 1,
+	  "opacity_curve": {
+		"bake_resolution": 100,
+		"max_domain": 16.0,
+		"max_value": 1.0,
+		"min_domain": 5.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 5.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "progress_ratio_curve": {
+		"bake_resolution": 100,
+		"max_domain": 16.0,
+		"max_value": 1.0,
+		"min_domain": 5.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 5.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 16.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "rotation_curve": {
+		"bake_resolution": 100,
+		"max_domain": 16.0,
+		"max_value": 1000.0,
+		"min_domain": 5.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 5.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 16.0,
+			  "y": 1000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "width_curve": {
+		"bake_resolution": 100,
+		"max_domain": 16.0,
+		"max_value": 200.0,
+		"min_domain": 5.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 5.0,
+			  "y": 51.1842002868652
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 16.0,
+			  "y": 200.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  }
+	},
+	{
+	  "MfObject_move_curve": {
+		"bake_interval": 5.0,
+		"points": [
+		  {
+			"in": {
+			  "x": -18.7000007629395,
+			  "y": -108.800003051758
+			},
+			"out": {
+			  "x": 18.7000007629395,
+			  "y": 108.800003051758
+			},
+			"position": {
+			  "x": 468.0,
+			  "y": -180.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 137.399993896484,
+			  "y": 46.2000007629395
+			},
+			"out": {
+			  "x": -137.399993896484,
+			  "y": -46.2000007629395
+			},
+			"position": {
+			  "x": 272.0,
+			  "y": 228.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 377.200012207031,
+			  "y": 49.5
+			},
+			"out": {
+			  "x": -377.200012207031,
+			  "y": -49.5
+			},
+			"position": {
+			  "x": -355.0,
+			  "y": -271.0
+			}
+		  }
+		]
+	  },
+	  "exist_period": {
+		"over": 20.0,
+		"start": 10.0
+	  },
+	  "hold_release_timing": [],
+	  "jugde_timing": [],
+	  "length_curve": {
+		"bake_resolution": 100,
+		"max_domain": 20.0,
+		"max_value": 100.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 100.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "mf_object_type": 2,
+	  "opacity_curve": {
+		"bake_resolution": 100,
+		"max_domain": 20.0,
+		"max_value": 1.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "progress_ratio_curve": {
+		"bake_resolution": 100,
+		"max_domain": 20.0,
+		"max_value": 1.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 20.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "rotation_curve": {
+		"bake_resolution": 100,
+		"max_domain": 20.0,
+		"max_value": 1000.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 12.9315996170044,
+			  "y": 794.736999511719
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 20.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "width_curve": {
+		"bake_resolution": 100,
+		"max_domain": 20.0,
+		"max_value": 100.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 100.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  }
+	},
+	{
+	  "MfObject_move_curve": {
+		"bake_interval": 5.0,
+		"points": [
+		  {
+			"in": {
+			  "x": -8.80000019073486,
+			  "y": 116.699996948242
+			},
+			"out": {
+			  "x": 8.80000019073486,
+			  "y": -116.699996948242
+			},
+			"position": {
+			  "x": -536.0,
+			  "y": 191.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -113.300003051758,
+			  "y": -10.0
+			},
+			"out": {
+			  "x": 113.300003051758,
+			  "y": 10.0
+			},
+			"position": {
+			  "x": -353.0,
+			  "y": -212.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -167.199996948242,
+			  "y": -14.3999996185303
+			},
+			"out": {
+			  "x": 167.199996948242,
+			  "y": 14.3999996185303
+			},
+			"position": {
+			  "x": 87.0,
+			  "y": 261.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -28.7000007629395,
+			  "y": 125.400001525879
+			},
+			"out": {
+			  "x": 28.7000007629395,
+			  "y": -125.400001525879
+			},
+			"position": {
+			  "x": 518.0,
+			  "y": -145.0
+			}
+		  }
+		]
+	  },
+	  "exist_period": {
+		"over": 25.0,
+		"start": 10.0
+	  },
+	  "hold_release_timing": [
+		20.0
+	  ],
+	  "jugde_timing": [
+		16.0
+	  ],
+	  "length_curve": {
+		"bake_resolution": 100,
+		"max_domain": 25.0,
+		"max_value": 70.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 70.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "mf_object_type": 3,
+	  "opacity_curve": {
+		"bake_resolution": 100,
+		"max_domain": 25.0,
+		"max_value": 1.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "progress_ratio_curve": {
+		"bake_resolution": 100,
+		"max_domain": 25.0,
+		"max_value": 1.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 25.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "rotation_curve": {
+		"bake_resolution": 100,
+		"max_domain": 25.0,
+		"max_value": 2000.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 13.2735996246338,
+			  "y": 1110.53002929688
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 22.3616008758545,
+			  "y": 1247.36999511719
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 25.0,
+			  "y": 2000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "width_curve": {
+		"bake_resolution": 100,
+		"max_domain": 25.0,
+		"max_value": 70.0,
+		"min_domain": 10.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 10.0,
+			  "y": 70.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  }
+	}
+  ],
+  "sum_mf_object_count": 4
+}

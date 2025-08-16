@@ -1,0 +1,258 @@
+{
+  "max_mf_object_count": 1,
+  "mf_objects": [
+	{
+	  "MfObject_move_curve": {
+		"bake_interval": 5.0,
+		"points": [
+		  {
+			"in": {
+			  "x": -215.664001464844,
+			  "y": 165.442993164063
+			},
+			"out": {
+			  "x": 215.664001464844,
+			  "y": -165.442993164063
+			},
+			"position": {
+			  "x": -440.0,
+			  "y": -250.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -143.041000366211,
+			  "y": -99.5587997436523
+			},
+			"out": {
+			  "x": 143.041000366211,
+			  "y": 99.5587997436523
+			},
+			"position": {
+			  "x": 196.0,
+			  "y": -315.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 94.1436004638672,
+			  "y": -142.018005371094
+			},
+			"out": {
+			  "x": -94.1436004638672,
+			  "y": 142.018005371094
+			},
+			"position": {
+			  "x": 254.0,
+			  "y": 121.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 104.391998291016,
+			  "y": 58.5639991760254
+			},
+			"out": {
+			  "x": -104.391998291016,
+			  "y": -58.5639991760254
+			},
+			"position": {
+			  "x": -138.0,
+			  "y": 221.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -49.3381996154785,
+			  "y": 58.5639991760254
+			},
+			"out": {
+			  "x": 49.3381996154785,
+			  "y": -58.5639991760254
+			},
+			"position": {
+			  "x": -195.0,
+			  "y": -25.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -42.0177001953125,
+			  "y": -64.4204025268555
+			},
+			"out": {
+			  "x": 42.0177001953125,
+			  "y": 64.4204025268555
+			},
+			"position": {
+			  "x": 0.0,
+			  "y": 0.0
+			}
+		  }
+		]
+	  },
+	  "exist_period": {
+		"over": 60.0,
+		"start": 1.0
+	  },
+	  "hold_release_timing": [],
+	  "jugde_timing": [
+		10.0,
+		20.0,
+		30.0,
+		30.1,
+		30.2
+	  ],
+	  "length_curve": {
+		"bake_resolution": 100,
+		"max_domain": 60.0,
+		"max_value": 500.0,
+		"min_domain": 1.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 1.0,
+			  "y": 250.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 60.0,
+			  "y": 500.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "mf_object_type": 1,
+	  "mf_z_index": -1,
+	  "opacity_curve": {
+		"bake_resolution": 100,
+		"max_domain": 60.0,
+		"max_value": 1.0,
+		"min_domain": 1.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 1.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "progress_ratio_curve": {
+		"bake_resolution": 100,
+		"max_domain": 60.0,
+		"max_value": 1.0,
+		"min_domain": 1.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 1.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 60.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "rotation_curve": {
+		"bake_resolution": 100,
+		"max_domain": 60.0,
+		"max_value": 1000.0,
+		"min_domain": 1.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 1.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 60.0,
+			  "y": 1000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "thickness": 60.0,
+	  "width_curve": {
+		"bake_resolution": 100,
+		"max_domain": 60.0,
+		"max_value": 500.0,
+		"min_domain": 1.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 1.0,
+			  "y": 150.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 30.5,
+			  "y": 500.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 60.0,
+			  "y": 400.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  }
+	}
+  ],
+  "sum_mf_object_count": 1,
+  "sum_mf_object_judgment_count": 5
+}

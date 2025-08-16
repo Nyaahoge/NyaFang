@@ -1,0 +1,3 @@
+##管理MfObject生命周期高精度时间程序在MfObjectLifecycle的子线程内实现
+
+extends Node2D
