@@ -158,12 +158,13 @@ func _physics_process(_delta: float) -> void:
 
 ##形态、运动、触控区域 模块
 #region
+var track_player_position##（重要）（赋值） 延时后 的track时刻
 #var curve_position: Vector2##曲线插值位置
 var curve_size: Vector2##（传出量值）曲线插值长宽
 #var curve_rotation: float##曲线插值旋转角度
 #var curve_opacity: float##曲线插值不透明度
 func curve_handling() -> void:##对curve进行实时线性插值并赋值给对应变量，控制MfObject的形态、运动、触控区域
-	var track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##get_playback_position()更新较快，故赋值给临时变量保持各属性处于同一时刻
+	track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##（重要）get_playback_position()更新较快，故赋值给临时变量保持各属性处于同一时刻。下面统一使用track_player_position这个时刻标准。
 	if move_curve.curve && progress_ratio_curve:
 		path_follow_2d.progress_ratio = progress_ratio_curve.sample(track_player_position)
 	else:
@@ -249,7 +250,7 @@ func state_detection() -> void:##State检测
 	#print(track_player.get_playback_position())
 	if not is_hit_jugement_over:##所有打击判定点未结束，则运行打击判定等相关模块
 		
-		var track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)
+		track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##（更新值）
 		var is_in_jugde_timing_bad_window = jugde_timing[jugde_timing_index] - game.bad_window <= track_player_position && track_player_position <= jugde_timing[jugde_timing_index] + game.bad_window##是否处于jugde_timing判定期
 		
 		
@@ -276,6 +277,8 @@ func state_detection() -> void:##State检测
 					
 					
 					##（状态）处于TAP_IN
+					#if self not in mf_objects_priority.tap_in_or_hold_in_mf_objects_priority:
+						#mf_objects_priority.add_to_priority(self)##TAP_IN时保证在优先判定组内，特别是打击判定后接着处于下一个判定点的判定窗口这个情况。
 					if not current_state == State.TAP_IN:
 						current_state = State.TAP_IN
 					#to_tap_priority_index
@@ -284,6 +287,7 @@ func state_detection() -> void:##State检测
 					
 					if current_state == State.TAP_IN and not judge_timing_hit_score.size() <= jugde_timing_index:
 						##（状态）处于TAP_IN变换为NOT瞬间  且  由于打击到了判定分数了而转换为State.NOT的
+						print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is TAP")
 						mf_objects_priority.remove_from_priority(self)
 						jugde_timing_index += 1
 					
@@ -293,7 +297,7 @@ func state_detection() -> void:##State检测
 						mf_objects_priority.remove_from_priority(self)
 						
 						judge_timing_hit_score.push_back(HitScore.MISS)
-						print("[MfObject]    ", (track_player.thread_track_player_position), "   ", self, " is MISS")
+						print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
 						
 						jugde_timing_index += 1
 						if jugde_timing_index >= jugde_timing.size():
@@ -318,7 +322,7 @@ func state_detection() -> void:##State检测
 					
 					if current_state == State.DRAG_IN and judge_timing_hit_score.size() <= jugde_timing_index:
 						judge_timing_hit_score.push_back(HitScore.MISS)
-						print("[MfObject]    ", (track_player.thread_track_player_position), "   ", self, " is MISS")
+						print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
 						jugde_timing_index += 1
 						if jugde_timing_index >= jugde_timing.size():
 							is_hit_jugement_over = true
@@ -405,7 +409,10 @@ func state_detection() -> void:##State检测
 					##（状态）处于NOT
 					if not current_state == State.NOT:
 						current_state = State.NOT
-	
+			
+			
+			
+			##（这个状态考虑废弃，不提示了）于NOT同时是MISS了的状态，用于提示MISS的效果
 	
 	
 	
@@ -417,6 +424,19 @@ func state_detection() -> void:##State检测
 
 
 func hit_jugement(track_time: float) -> void:##判定打击评分。TouchArea检测到触控可通过   数组 或 参数  转递信息（动作时刻）到此集中处理，根据不同State自动条件判断为不同动作。
+	#track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##（更新值）
+	
 	if current_state == State.TAP_IN:
-		pass
+		
+		match track_time:
+			_ when (jugde_timing[jugde_timing_index] - game.perfect_window <= track_time - game.latency_adjustment && track_time - game.latency_adjustment <= jugde_timing[jugde_timing_index] + game.perfect_window):
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
+			
+			_ when (jugde_timing[jugde_timing_index] - game.good_window <= track_time - game.latency_adjustment && track_time - game.latency_adjustment <= jugde_timing[jugde_timing_index] + game.good_window):
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is GOOD")
+			
+			_ when (jugde_timing[jugde_timing_index] - game.bad_window <= track_time - game.latency_adjustment && track_time - game.latency_adjustment <= jugde_timing[jugde_timing_index] + game.bad_window):
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is BAD")
+		
+		
 #endregion

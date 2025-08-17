@@ -14,7 +14,8 @@ extends Node2D
 ##判定时间窗口，单位：正负秒。未得到以下判定则判定为miss。
 var perfect_window = 0.100##-100~+100
 var good_window = 0.150##-150~+150
-var bad_window = 0.175##-175~+175
+#var bad_window = 0.175##-175~+175
+var bad_window = 0.500##-175~+175
 
 
 

@@ -98,6 +98,9 @@
 	  "hold_release_timing": [],
 	  "jugde_timing": [
 		10.0,
+		10.1,
+		10.2,
+		10.3,
 		20.0,
 		30.0,
 		30.1,
@@ -244,5 +247,5 @@
 	}
   ],
   "sum_mf_object_count": 1,
-  "sum_mf_object_judgment_count": 5
+  "sum_mf_object_judgment_count": 8
 }

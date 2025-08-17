@@ -11,6 +11,7 @@ var chart_size: Vector2 = Vector2(standard_chart_in_viewport_size_y * view_aspec
 var viewport_size: Vector2##此程序窗口的尺寸
 var viewport_aspect_ratio: float##此程序窗口的宽高比
 
+var viewport_chart_ratio##此程序窗口的尺寸 与 谱面视图尺寸 之比。用于变换视图比例。
 
 func _ready() -> void:
 	chart_view_initialize()
@@ -22,10 +23,13 @@ func _ready() -> void:
 func chart_view_initialize() -> void:
 	viewport_size = get_viewport().size
 	viewport_aspect_ratio = viewport_size.x / viewport_size.y
+	viewport_chart_ratio = viewport_size.y / chart_size.y
 	if view_aspect_ratio <= viewport_aspect_ratio:
+		viewport_chart_ratio = viewport_size.y / chart_size.y
 		camera_2d.zoom = Vector2(viewport_size.y / chart_size.y, viewport_size.y / chart_size.y)
 		
 	else:
+		viewport_chart_ratio = viewport_size.x / chart_size.x
 		camera_2d.zoom = Vector2(viewport_size.x / chart_size.x, viewport_size.x / chart_size.x)
 		
 	#print(chart_size)
@@ -39,12 +43,14 @@ func on_viewport_resized():##视图改变时进行适配调整操作；不需要
 	viewport_size = get_viewport().size
 	viewport_aspect_ratio = viewport_size.x / viewport_size.y
 	if view_aspect_ratio <= viewport_aspect_ratio:
+		viewport_chart_ratio = viewport_size.y / chart_size.y
 		camera_2d.zoom = Vector2(viewport_size.y / chart_size.y, viewport_size.y / chart_size.y)
 		
 	else:
+		viewport_chart_ratio = viewport_size.x / chart_size.x
 		camera_2d.zoom = Vector2(viewport_size.x / chart_size.x, viewport_size.x / chart_size.x)
 		
-	print(chart_size)
+	#print(chart_size)
 	
 	
 	
