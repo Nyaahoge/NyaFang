@@ -1,7 +1,11 @@
 extends AudioStreamPlayer
 ##（自拟）使用子线程，专门用于 高精度时间 的程序。用于调用高精度get_playback_position()。（有些 地方不精确也没事，比如：是否在判定窗口，只要进入和出去的时刻对就算行）
 
-const await_time = 3##谱面开始前等待时间
+
+@onready var game: Game = $"../Game"
+
+
+const await_time = 3##（重要）谱面开始前等待时间
 
 func _ready() -> void:
 	
@@ -34,6 +38,7 @@ func _ready() -> void:
 
 ##子线程调用get_playback_position()
 var thread_track_player_position: float##（重要）（全局引用同步）统一引用一个get_playback_position()
+var thread_track_player_latency_position: float##（重要）（全局引用同步）统一引用一个 考虑了谱面延时的 get_playback_position()
 
 var thread = Thread.new()
 var running = false
@@ -42,10 +47,12 @@ func _audio_thread() -> void:##（重要）子线程
 	while running:
 		
 		OS.delay_msec(0)#（重要）改变检测频率
-		var a = get_playback_position()
+		var a = get_playback_position()##（临时）
 		mutex.lock()
-		if not thread_track_player_position == a:
+		if not thread_track_player_position == a:##get_playback_position()更新了
 			thread_track_player_position = a
+			update_thread_track_player_latency_position()
+			
 		#print(thread_track_player_position)
 		mutex.unlock()
 
@@ -53,3 +60,12 @@ func _audio_thread() -> void:##（重要）子线程
 func _exit_tree() -> void:# 停止线程（节点释放时自动调用）
 	running = false
 	thread.wait_to_finish()
+
+
+
+
+
+
+
+func update_thread_track_player_latency_position():##（重要）更新延时后track时刻
+	thread_track_player_latency_position = thread_track_player_position - game.latency_adjustment##（更新值）

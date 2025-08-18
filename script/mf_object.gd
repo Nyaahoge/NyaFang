@@ -1,6 +1,6 @@
 ##（自拟）喵方对象
-##MfObject：note们及box的统一名称
-##因为变得太快会导致抖动所以不考虑AudioServer.get_time_since_last_mix()
+##MfObject：note们及box的统一名称，当时没有抽象，现在已经迟了。
+##因为会导致抖动所以不考虑AudioServer.get_time_since_last_mix()
 
 ##MfObject详情：
 ##Hold无尾判
@@ -27,17 +27,13 @@ enum State {##枚举当前状态，状态处理这里直接状态式编程，没
 	HOLD_OUT,##Hold的二阶段判定中状态（判定后立即变为NOT状态（击中或miss））
 }
 
-enum HitScore {##枚举打击评分（包括miss）
-	PERFECT,
-	GOOD,
-	BAD,
-	MISS
-}
+
 
 ##@onready节点
 #region
 @onready var game: Node = $"../../Game"
-@onready var mf_objects_priority: Node = $"../../Game/MfObjectsPriority"
+@onready var hit_jugdment: Node = $"../../Game/HitJugdment"
+
 
 @onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
 
@@ -146,9 +142,13 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 
 func _process(_delta: float) -> void:
 	curve_handling()
-
+#var a = 0
 func _physics_process(_delta: float) -> void:
 	state_detection()
+	#if a == 0 && jugde_timing[jugde_timing_index] < track_player_latency_position:
+		#mf_object_tap_hit(HitJugdment.HitScore.PERFECT)
+		#a = 1
+
 
 
 
@@ -158,23 +158,23 @@ func _physics_process(_delta: float) -> void:
 
 ##形态、运动、触控区域 模块
 #region
-var track_player_position##（重要）（赋值） 延时后 的track时刻
+var track_player_latency_position##（重要）（赋值） 延时后 的track时刻
 #var curve_position: Vector2##曲线插值位置
 var curve_size: Vector2##（传出量值）曲线插值长宽
 #var curve_rotation: float##曲线插值旋转角度
 #var curve_opacity: float##曲线插值不透明度
 func curve_handling() -> void:##对curve进行实时线性插值并赋值给对应变量，控制MfObject的形态、运动、触控区域
-	track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##（重要）get_playback_position()更新较快，故赋值给临时变量保持各属性处于同一时刻。下面统一使用track_player_position这个时刻标准。
+	track_player_latency_position = track_player.thread_track_player_latency_position##（重要）get_playback_position()更新较快，故赋值给临时变量保持各属性处于同一时刻。下面统一使用track_player_position这个时刻标准。
 	if move_curve.curve && progress_ratio_curve:
-		path_follow_2d.progress_ratio = progress_ratio_curve.sample(track_player_position)
+		path_follow_2d.progress_ratio = progress_ratio_curve.sample(track_player_latency_position)
 	else:
 		print("move_curve 或 progress_ratio_curve为空")
 	
 	if length_curve && width_curve:##长、宽，注意不是单纯缩放；另外注意，长宽以Box的内外图形间（Drag一样）为标准
 		##绘制MfObject图形
 		#regions
-		var a: float = length_curve.sample(track_player_position)#（临时变量）长
-		var b: float = width_curve.sample(track_player_position)#（临时变量）宽
+		var a: float = length_curve.sample(track_player_latency_position)#（临时变量）长
+		var b: float = width_curve.sample(track_player_latency_position)#（临时变量）宽
 		var t: float = thickness#（重要）（设定）（临时变量）厚度
 		
 		curve_size = Vector2(a, b)##用于传出长宽数值
@@ -217,19 +217,26 @@ func curve_handling() -> void:##对curve进行实时线性插值并赋值给对�
 		print("length_curve 或 width_curve为空")
 		
 	if rotation_curve:
-		shape.rotation_degrees = rotation_curve.sample(track_player_position)
+		shape.rotation_degrees = rotation_curve.sample(track_player_latency_position)
 		collision_polygon_2d.rotation_degrees = shape.rotation_degrees
 	else:
 		print("rotation_curve为空")
 	
 	if opacity_curve:
-		shape.modulate.a = opacity_curve.sample(track_player_position)
+		shape.modulate.a = opacity_curve.sample(track_player_latency_position)
 	else:
 		print("opacity_curve为空")
 #endregion
 
 
-##管理打击判定主要模块（根据State、被如何打击和判定相关量，管理MfObject的判定过程）
+
+
+
+
+
+
+
+##管理判定相关状态主要模块（根据State、被如何打击和判定相关量，管理MfObject的判定过程）
 #region
 var is_hit_jugement_over: bool = false##所有打击判定点是否已结束
 
@@ -239,7 +246,7 @@ var jugde_timing_index: int = 0##（重要）（标记）接下来要进行或�
 var hold_release_timing_index: int = 0##（重要）（标记）接下来要或正在进行的Hold尾部判定点。随检测判定更新。
 #var is_on_hold_in: bool = false##（当前）是否进入hold判定期
 
-#var to_tap_priority_index: int = 0##（重要）（标记）接下来要to_tap_priority的判定点
+var add_to_tap_priority_index: int = 0##（重要）（标记）接下来要to_tap_priority的判定点
 
 var judge_timing_hit_score: Array##记录每次（Hold是看最终评分）判定的评分。（不要跟表示总分数的score混淆了）
 var hold_head_judge_timing_hit_score: Array##记录每次Hold头部判定的评分。（头部一判定就记录）
@@ -250,8 +257,8 @@ func state_detection() -> void:##State检测
 	#print(track_player.get_playback_position())
 	if not is_hit_jugement_over:##所有打击判定点未结束，则运行打击判定等相关模块
 		
-		track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##（更新值）
-		var is_in_jugde_timing_bad_window = jugde_timing[jugde_timing_index] - game.bad_window <= track_player_position && track_player_position <= jugde_timing[jugde_timing_index] + game.bad_window##是否处于jugde_timing判定期
+		track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
+		var is_in_jugde_timing_bad_window = jugde_timing[jugde_timing_index] - game.bad_window <= track_player.thread_track_player_latency_position && track_player.thread_track_player_latency_position <= jugde_timing[jugde_timing_index] + game.bad_window##是否处于jugde_timing判定期
 		
 		
 		
@@ -265,154 +272,192 @@ func state_detection() -> void:##State检测
 		match mf_object_type:
 			
 			##MfObjectType.TAP:
-			##1.处于NOT，2.处于NOT变换为TAP_IN瞬间，3.处于TAP_IN，4.处于TAP_IN变换为NOT瞬间（两条路径）
-			##从NOT变换为TAP_IN只会由判定点引起；从TAP_IN变换为NOT既可能经过打击到了判定，也有可能是MISS了
+			##以下为废弃思路，因为Tap不通过依赖状态能更简单实现，故废弃。
+			#1.处于NOT，2.处于NOT变换为TAP_IN瞬间，3.处于TAP_IN，4.处于TAP_IN变换为NOT瞬间（两条路径）
+			#从NOT变换为TAP_IN只会由判定点引起；从TAP_IN变换为NOT既可能经过打击到了判定，也有可能是MISS了
+			
+			
 			MfObjectType.TAP:
-				if is_in_jugde_timing_bad_window and judge_timing_hit_score.size() <= jugde_timing_index:##处于判定期 同时 当前判定点还未被评分
-					
-					##（状态）处于NOT变换为TAP_IN瞬间
-					if current_state == State.NOT:
-						mf_objects_priority.add_to_priority(self)
-					
-					
-					
-					##（状态）处于TAP_IN
-					#if self not in mf_objects_priority.tap_in_or_hold_in_mf_objects_priority:
-						#mf_objects_priority.add_to_priority(self)##TAP_IN时保证在优先判定组内，特别是打击判定后接着处于下一个判定点的判定窗口这个情况。
-					if not current_state == State.TAP_IN:
-						current_state = State.TAP_IN
-					#to_tap_priority_index
-					
-				else:
-					
-					if current_state == State.TAP_IN and not judge_timing_hit_score.size() <= jugde_timing_index:
-						##（状态）处于TAP_IN变换为NOT瞬间  且  由于打击到了判定分数了而转换为State.NOT的
-						print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is TAP")
-						mf_objects_priority.remove_from_priority(self)
-						jugde_timing_index += 1
-					
-					
-					if current_state == State.TAP_IN and judge_timing_hit_score.size() <= jugde_timing_index:
-						##（状态）处于TAP_IN变换为NOT瞬间  且  是因为 一直到State.TAP_IN结束都没有打击判定 的原因而转换为State.NOT的，则视为HitScore.MISS。
-						mf_objects_priority.remove_from_priority(self)
-						
-						judge_timing_hit_score.push_back(HitScore.MISS)
-						print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
-						
-						jugde_timing_index += 1
-						if jugde_timing_index >= jugde_timing.size():
-							is_hit_jugement_over = true
-							print("is_hit_jugement_over == true")
-					
-					
-					##（状态）处于NOT
-					if not current_state == State.NOT:
-						current_state = State.NOT
-			
-			
-			
-			
-			
-			
-			MfObjectType.DRAG:
-				if is_in_jugde_timing_bad_window and judge_timing_hit_score.size() <= jugde_timing_index:##处于判定期 同时 当前判定点还未被评分
-					if not current_state == State.DRAG_IN:
-						current_state = State.DRAG_IN
-				else:
-					
-					if current_state == State.DRAG_IN and judge_timing_hit_score.size() <= jugde_timing_index:
-						judge_timing_hit_score.push_back(HitScore.MISS)
-						print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
-						jugde_timing_index += 1
-						if jugde_timing_index >= jugde_timing.size():
-							is_hit_jugement_over = true
-							print("is_hit_jugement_over == true")
-					
-					if not current_state == State.NOT:
-						current_state = State.NOT
-			
-			
-			
-			
-			
-			
-			
-			MfObjectType.HOLD:
-				##Hold专用量
-				var is_in_hold_release_timing_bad_window = hold_release_timing[hold_release_timing_index] - game.bad_window <= track_player_position and track_player_position <= hold_release_timing[hold_release_timing_index]##是否处于jugde_timing判定期。（跟jugde_timing期组成不同，因为无尾判））
 				
-				
-				
-				
-				
-				##管理状态
-				
-				if is_in_jugde_timing_bad_window and hold_head_judge_timing_hit_score.size() <= jugde_timing_index:
-					##（状态）处于NOT变换为HOLD_IN瞬间
-					if current_state == State.NOT:
-						mf_objects_priority.add_to_priority(self)
-					
-					
-					
-					##（状态）处于##（状态）处于HOLD_IN
-					if not current_state == State.HOLD_IN:
-						current_state = State.HOLD_IN
-					
-					
-					
-				elif (not is_in_hold_release_timing_bad_window) and hold_head_judge_timing_hit_score.size() > judge_timing_hit_score.size():##头判后长按状态。头判成功尾部未判且还未到尾部时。
-					##（状态）处于HOLD_IN变换为HOLD_KEEP瞬间
-					if current_state == State.HOLD_IN:
-						pass
-						#mf_objects_priority.remove_from_priority(self)附加到判定代码里吧
-					
-					
-					
-					##（状态）处于##（状态）处于HOLD_KEEP
-					if not current_state == State.HOLD_KEEP:
-						current_state = State.HOLD_KEEP
-					
-					
-					
-				elif is_in_hold_release_timing_bad_window and hold_head_judge_timing_hit_score.size() > judge_timing_hit_score.size():
-					##（状态）处于HOLD_KEEP变换为HOLD_OUT瞬间
-					if current_state == State.HOLD_IN:
-						pass
-					
-					
-					
-					##（状态）处于##（状态）处于HOLD_OUT
-					if not current_state == State.HOLD_OUT:
-						current_state = State.HOLD_OUT
-					
-					
-					
-				else:
-					##（状态）处于因为判定到了分数而从其他状态变换为NOT瞬间
-					if (current_state == State.HOLD_IN or current_state == State.HOLD_KEEP or current_state == State.HOLD_OUT) and judge_timing_hit_score.size() <= jugde_timing_index:
-						pass
-					
-					
-					
-					##（状态）处于因为MISS而从其他状态变换为NOT瞬间
-					if (current_state == State.HOLD_IN or current_state == State.HOLD_KEEP or current_state == State.HOLD_OUT) and judge_timing_hit_score.size() <= jugde_timing_index:
-						mf_objects_priority.remove_from_priority(self)
-						judge_timing_hit_score.push_back(HitScore.MISS)
-						print("[MfObject]    ", (track_player.thread_track_player_position), "   ", self, " is MISS")
-						jugde_timing_index += 1
-						if jugde_timing_index >= jugde_timing.size():
-							is_hit_jugement_over = true
-							print("is_hit_jugement_over == true")
-					
-					
-					
-					##（状态）处于NOT
-					if not current_state == State.NOT:
-						current_state = State.NOT
+				while jugde_timing[add_to_tap_priority_index] - game.perfect_window <= track_player.thread_track_player_latency_position:##有判定点处于判定窗口，则加入tap_in_or_hold_in_mf_objects_priority排队。
+					print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_priority(self)")
+					hit_jugdment.add_to_priority(self)
+					add_to_tap_priority_index += 1
 			
 			
 			
-			##（这个状态考虑废弃，不提示了）于NOT同时是MISS了的状态，用于提示MISS的效果
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			#MfObjectType.TAP:
+				###不论状态，只按给出条件执行
+				#
+				#
+				#
+				#if is_in_jugde_timing_bad_window and judge_timing_hit_score.size() <= jugde_timing_index:##处于判定期 同时 当前判定点还未被评分
+					#if current_state == State.NOT:
+					###（状态）处于NOT变换为TAP_IN瞬间
+						#mf_objects_priority.add_to_priority(self)
+					#
+					#
+					#
+					###（状态）处于TAP_IN
+					##if self not in mf_objects_priority.tap_in_or_hold_in_mf_objects_priority:
+						##mf_objects_priority.add_to_priority(self)##TAP_IN时保证在优先判定组内，特别是打击判定后接着处于下一个判定点的判定窗口这个情况。
+					#if not current_state == State.TAP_IN:
+						#current_state = State.TAP_IN
+					##to_tap_priority_index
+					#
+				#else:
+					#
+					#if current_state == State.TAP_IN and not judge_timing_hit_score.size() <= jugde_timing_index:
+						###（状态）处于TAP_IN变换为NOT瞬间  且  由于打击到了判定分数了而转换为State.NOT的
+						#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is TAP")
+						#mf_objects_priority.remove_from_priority(self)
+						#jugde_timing_index += 1
+					#
+					#
+					#if current_state == State.TAP_IN and judge_timing_hit_score.size() <= jugde_timing_index:
+						###（状态）处于TAP_IN变换为NOT瞬间  且  是因为 一直到State.TAP_IN结束都没有打击判定 的原因而转换为State.NOT的，则视为HitScore.MISS。
+						#mf_objects_priority.remove_from_priority(self)
+						#
+						#judge_timing_hit_score.push_back(HitScore.MISS)
+						#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
+						#
+						#jugde_timing_index += 1
+						#if jugde_timing_index >= jugde_timing.size():
+							#is_hit_jugement_over = true
+							#print("is_hit_jugement_over == true")
+					#
+					#
+					###（状态）处于NOT
+					#if not current_state == State.NOT:
+						#current_state = State.NOT
+			#
+			#
+			#
+			#
+			#
+			#
+			#MfObjectType.DRAG:
+				#if is_in_jugde_timing_bad_window and judge_timing_hit_score.size() <= jugde_timing_index:##处于判定期 同时 当前判定点还未被评分
+					#if not current_state == State.DRAG_IN:
+						#current_state = State.DRAG_IN
+				#else:
+					#
+					#if current_state == State.DRAG_IN and judge_timing_hit_score.size() <= jugde_timing_index:
+						#judge_timing_hit_score.push_back(HitScore.MISS)
+						#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
+						#jugde_timing_index += 1
+						#if jugde_timing_index >= jugde_timing.size():
+							#is_hit_jugement_over = true
+							#print("is_hit_jugement_over == true")
+					#
+					#if not current_state == State.NOT:
+						#current_state = State.NOT
+			#
+			#
+			#
+			#
+			#
+			#
+			#
+			#MfObjectType.HOLD:
+				###Hold专用量
+				#var is_in_hold_release_timing_bad_window = hold_release_timing[hold_release_timing_index] - game.bad_window <= track_player_position and track_player_position <= hold_release_timing[hold_release_timing_index]##是否处于jugde_timing判定期。（跟jugde_timing期组成不同，因为无尾判））
+				#
+				#
+				#
+				#
+				#
+				###管理状态
+				#
+				#if is_in_jugde_timing_bad_window and hold_head_judge_timing_hit_score.size() <= jugde_timing_index:
+					###（状态）处于NOT变换为HOLD_IN瞬间
+					#if current_state == State.NOT:
+						#mf_objects_priority.add_to_priority(self)
+					#
+					#
+					#
+					###（状态）处于##（状态）处于HOLD_IN
+					#if not current_state == State.HOLD_IN:
+						#current_state = State.HOLD_IN
+					#
+					#
+					#
+				#elif (not is_in_hold_release_timing_bad_window) and hold_head_judge_timing_hit_score.size() > judge_timing_hit_score.size():##头判后长按状态。头判成功尾部未判且还未到尾部时。
+					###（状态）处于HOLD_IN变换为HOLD_KEEP瞬间
+					#if current_state == State.HOLD_IN:
+						#pass
+						##mf_objects_priority.remove_from_priority(self)附加到判定代码里吧
+					#
+					#
+					#
+					###（状态）处于##（状态）处于HOLD_KEEP
+					#if not current_state == State.HOLD_KEEP:
+						#current_state = State.HOLD_KEEP
+					#
+					#
+					#
+				#elif is_in_hold_release_timing_bad_window and hold_head_judge_timing_hit_score.size() > judge_timing_hit_score.size():
+					###（状态）处于HOLD_KEEP变换为HOLD_OUT瞬间
+					#if current_state == State.HOLD_IN:
+						#pass
+					#
+					#
+					#
+					###（状态）处于##（状态）处于HOLD_OUT
+					#if not current_state == State.HOLD_OUT:
+						#current_state = State.HOLD_OUT
+					#
+					#
+					#
+				#else:
+					###（状态）处于因为判定到了分数而从其他状态变换为NOT瞬间
+					#if (current_state == State.HOLD_IN or current_state == State.HOLD_KEEP or current_state == State.HOLD_OUT) and judge_timing_hit_score.size() <= jugde_timing_index:
+						#pass
+					#
+					#
+					#
+					###（状态）处于因为MISS而从其他状态变换为NOT瞬间
+					#if (current_state == State.HOLD_IN or current_state == State.HOLD_KEEP or current_state == State.HOLD_OUT) and judge_timing_hit_score.size() <= jugde_timing_index:
+						#mf_objects_priority.remove_from_priority(self)
+						#judge_timing_hit_score.push_back(HitScore.MISS)
+						#print("[MfObject]    ", (track_player.thread_track_player_position), "   ", self, " is MISS")
+						#jugde_timing_index += 1
+						#if jugde_timing_index >= jugde_timing.size():
+							#is_hit_jugement_over = true
+							#print("is_hit_jugement_over == true")
+					#
+					#
+					#
+					###（状态）处于NOT
+					#if not current_state == State.NOT:
+						#current_state = State.NOT
+			#
+			#
+			#
+			###（这个状态考虑废弃，不提示了）于NOT同时是MISS了的状态，用于提示MISS的效果
 	
 	
 	
@@ -420,23 +465,28 @@ func state_detection() -> void:##State检测
 
 
 
+##判定评分后执行程序模块
+func mf_object_tap_hit(hitscore: int):##（被动调用）MfObject的tap动作被打击判定到了,自己要执行的程序（注意：Tap和Hold要分别执行）
+	hit_jugdment.remove_from_priority(self)
+	judge_timing_hit_score.push_back(hitscore)
+	jugde_timing_index += 1
+	match hitscore:
+		HitJugdment.HitScore.PERFECT:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
+		HitJugdment.HitScore.GOOD:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is GOOD")
+		HitJugdment.HitScore.BAD:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is BAD")
+
+
+func mf_object_tap_miss():##（被动调用）MfObject的tap动作被判定为MISS,自己要执行的程序（注意：Tap和Hold要分别执行）
+	hit_jugdment.remove_from_priority(self)
+	judge_timing_hit_score.push_back(hit_jugdment.HitScore.MISS)
+	jugde_timing_index += 1
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
 
 
 
-func hit_jugement(track_time: float) -> void:##判定打击评分。TouchArea检测到触控可通过   数组 或 参数  转递信息（动作时刻）到此集中处理，根据不同State自动条件判断为不同动作。
-	#track_player_position = (track_player.thread_track_player_position - game.latency_adjustment)##（更新值）
-	
-	if current_state == State.TAP_IN:
-		
-		match track_time:
-			_ when (jugde_timing[jugde_timing_index] - game.perfect_window <= track_time - game.latency_adjustment && track_time - game.latency_adjustment <= jugde_timing[jugde_timing_index] + game.perfect_window):
-				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
-			
-			_ when (jugde_timing[jugde_timing_index] - game.good_window <= track_time - game.latency_adjustment && track_time - game.latency_adjustment <= jugde_timing[jugde_timing_index] + game.good_window):
-				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is GOOD")
-			
-			_ when (jugde_timing[jugde_timing_index] - game.bad_window <= track_time - game.latency_adjustment && track_time - game.latency_adjustment <= jugde_timing[jugde_timing_index] + game.bad_window):
-				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is BAD")
-		
-		
+
+
 #endregion

@@ -1,0 +1,94 @@
+class_name HitJugdment##用于访问枚举
+extends Node
+
+@onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
+@onready var game: Node2D = $".."
+@onready var fingers_tracker: Node2D = $"../FingersTracker"
+
+enum HitScore {##枚举打击评分（包括miss）
+	PERFECT,
+	GOOD,
+	BAD,
+	MISS
+}
+
+func _physics_process(delta: float) -> void:
+	print("[MfObjectsPriority]    ", tap_in_or_hold_in_mf_objects_priority)
+	check_priority_miss()
+
+
+
+
+
+
+
+
+
+
+##MfObject判定点排队模块（用于管理要判定的MfObject，进行排队）
+var tap_in_or_hold_in_mf_objects_priority: Array##MfObject判定点按的优先级排序数组（注意：包括Hold开头的点按，只会有Tap和Hold）
+
+func add_to_priority(mf_object: MfObject):##MfObject进入点按判定时期，需要通过此函数排序进入mf_objects_tap_priority。
+	tap_in_or_hold_in_mf_objects_priority.push_back(mf_object)##一般 最后加的都是最后结束判定窗口的，即它们的判定期都比自己早。废弃思路：所以这里按逆序遍历。
+
+
+func remove_from_priority(mf_object: MfObject):##移除
+	tap_in_or_hold_in_mf_objects_priority.erase(mf_object)
+
+
+
+
+
+var track_player_latency_position: float##考虑了谱面延迟的track时刻
+##MfObject判定评分模块（被动调用，接收FingersTracker的点击触控信息，据此对MfObject进行判定）
+func tap_action_hit_jugdment(finger_position: Vector2):##tap动作的判定
+	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
+	var i: int = 0##（临时）
+	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject
+		var mf_obj = tap_in_or_hold_in_mf_objects_priority[i]
+		if is_in_mf_object(finger_position, mf_obj):##若位置上点击到了MfObject，则时间上进行判定分数
+			mf_obj.mf_object_tap_hit(hit_judgment(mf_obj))
+		i += 1
+
+
+func check_priority_miss():##每帧主动检测tap_in_or_hold_in_mf_objects_priority内MISS的MfObject
+	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
+	var i: int = 0##（临时）
+	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject
+		var mf_obj = tap_in_or_hold_in_mf_objects_priority[i]
+		var jugde_timing = mf_obj.jugde_timing[mf_obj.jugde_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
+		if jugde_timing + game.perfect_window < track_player_latency_position:##判定为MISS
+			mf_obj.mf_object_tap_miss()
+		i += 1
+
+
+
+#fingers_tracker.under_finger_mf_objects
+
+
+
+
+
+
+
+##工具类函数模块
+
+func is_in_mf_object(pos: Vector2, mf_obj: MfObject) -> bool:##（工具）（重要）判断一个 世界坐标 是否在一个 MfObject 里。用于检测手指是否碰到MfObject。
+	var mf_obj_pos = (pos - mf_obj.path_follow_2d.position).rotated(deg_to_rad(- mf_obj.shape.rotation_degrees))
+	return - mf_obj.curve_size.x / 2 <= mf_obj_pos.x  && mf_obj_pos.x <= mf_obj.curve_size.x / 2 && - mf_obj.curve_size.y / 2 <= mf_obj_pos.y && mf_obj_pos.y <= mf_obj.curve_size.y / 2
+
+
+func hit_judgment(mf_object: MfObject) -> int:##（工具）判定打击评分。TouchArea检测到触控可通过   数组 或 参数  转递信息（动作时刻）到此集中处理，根据不同State自动条件判断为不同动作。
+	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
+	var jugde_timing = mf_object.jugde_timing[mf_object.jugde_timing_index]##此判定点的时刻
+	
+	match track_player_latency_position:
+		_ when (jugde_timing - game.perfect_window <= track_player_latency_position - game.latency_adjustment && track_player_latency_position - game.latency_adjustment <= jugde_timing + game.perfect_window):
+			return HitScore.PERFECT
+		
+		_ when (jugde_timing - game.good_window <= track_player_latency_position - game.latency_adjustment && track_player_latency_position - game.latency_adjustment <= jugde_timing + game.good_window):
+			return HitScore.GOOD
+		
+		_ when (jugde_timing - game.bad_window <= track_player_latency_position - game.latency_adjustment && track_player_latency_position - game.latency_adjustment <= jugde_timing + game.bad_window):
+			return HitScore.BAD
+	return HitScore.BAD
