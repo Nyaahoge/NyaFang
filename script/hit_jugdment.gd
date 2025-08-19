@@ -16,7 +16,7 @@ enum HitScore {##枚举打击评分（包括miss）
 }
 
 func _physics_process(delta: float) -> void:
-	#print("[HitJugdment]    ", tap_in_or_hold_in_mf_objects_priority)
+	#print("[HitJugdment]    ", tap_action_mf_objects_priority)
 	check_priority_miss()
 
 
@@ -26,19 +26,19 @@ func _physics_process(delta: float) -> void:
 
 
 
+##tap动作判定模块(tap动作：手指在屏幕上按下，是个瞬间性动作)
+#region
+##tap动作的判定流程：
+##（1）每个MfObject自检测到判定点，把判定点上传到HitJugdment
+##（2）（注意是瞬间性动作）FingersTracker的触控函数调用HitJugdment的判定函数对判定点进行判定评分  或者  HitJugdment判定MISS函数检测出MISS判定点
+##（3）判定点评分调用MfObject的函数执行评分相应程序
 
 ##MfObject判定点排队模块（用于管理要判定的MfObject，进行排队）
-var tap_in_or_hold_in_mf_objects_priority: Array##MfObject判定点按的优先级排序数组（注意：包括Hold开头的点按，只会有Tap和Hold）
-
+var tap_action_mf_objects_priority: Array##MfObject判定点按的优先级排序数组（注意：包括Hold开头的点按，只会有Tap和Hold）
 func add_to_priority(mf_object: MfObject):##MfObject进入点按判定时期，需要通过此函数排序进入mf_objects_tap_priority。
-	tap_in_or_hold_in_mf_objects_priority.push_back(mf_object)##一般 最后加的都是最后结束判定窗口的，即它们的判定期都比自己早。废弃思路：所以这里按逆序遍历。
-
-
+	tap_action_mf_objects_priority.push_back(mf_object)##一般 最后加的都是最后结束判定窗口的，即它们的判定期都比自己早。废弃思路：所以这里按逆序遍历。
 func remove_from_priority(mf_object: MfObject):##移除
-	tap_in_or_hold_in_mf_objects_priority.erase(mf_object)
-
-
-
+	tap_action_mf_objects_priority.erase(mf_object)
 
 
 var track_player_latency_position: float##考虑了谱面延迟的track时刻
@@ -46,27 +46,38 @@ var track_player_latency_position: float##考虑了谱面延迟的track时刻
 func tap_action_hit_jugdment(finger_position: Vector2):##tap动作的判定
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var i: int = 0##（临时）
-	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject（注意：tap动作对最早判定点起作用后就消耗了不会再次判定其他判定点）
-		var mf_obj = tap_in_or_hold_in_mf_objects_priority[i]
+	while i < tap_action_mf_objects_priority.size():##遍历检查待判定MfObject（注意：tap动作对最早判定点起作用后就消耗了不会再次判定其他判定点）
+		var mf_obj = tap_action_mf_objects_priority[i]
 		if is_in_mf_object(finger_position, mf_obj):##若位置上点击到了MfObject，则时间上进行判定分数
-			mf_obj.mf_object_tap_hit(hit_judgment(mf_obj))
+			mf_obj.mf_object_tap_hit(judge_hit_score(mf_obj))
 			return
 		i += 1
 
-
-func check_priority_miss():##每帧主动检测tap_in_or_hold_in_mf_objects_priority内所有MfObject，哪些MISS了。
+func check_priority_miss():##每帧主动检测tap_action_mf_objects_priority内所有MfObject，哪些MISS了。
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var i: int = 0##（临时）
-	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject
-		var mf_obj = tap_in_or_hold_in_mf_objects_priority[i]
+	while i < tap_action_mf_objects_priority.size():##遍历检查待判定MfObject
+		var mf_obj = tap_action_mf_objects_priority[i]
 		var jugde_timing = mf_obj.jugde_timing[mf_obj.jugde_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
 		if jugde_timing + game.bad_window < track_player_latency_position:##判定为MISS
 			mf_obj.mf_object_tap_miss()
 		i += 1
-
+#endregion
 
 
 #fingers_tracker.under_finger_mf_objects
+
+
+##touch动作判定模块(touch动作：手指碰到屏幕就算，是个可持续性的动作)
+var touch_action_mf_objects: Array##添加了需要判定touch动作的MfObject的数组（Drag 和 处于HOLD_IN的Hold）
+func add_to_touch(mf_object: MfObject):##添加
+	tap_action_mf_objects_priority.push_back(mf_object)
+func remove_from_touch(mf_object: MfObject):##移除
+	tap_action_mf_objects_priority.erase(mf_object)
+
+
+
+
 
 
 
@@ -81,7 +92,7 @@ func is_in_mf_object(pos: Vector2, mf_obj: MfObject) -> bool:##（工具）（�
 	return - mf_obj.curve_size.x / 2 <= mf_obj_pos.x  && mf_obj_pos.x <= mf_obj.curve_size.x / 2 && - mf_obj.curve_size.y / 2 <= mf_obj_pos.y && mf_obj_pos.y <= mf_obj.curve_size.y / 2
 
 
-func hit_judgment(mf_object: MfObject) -> int:##（工具）判定打击评分。TouchArea检测到触控可通过   数组 或 参数  转递信息（动作时刻）到此集中处理，根据不同State自动条件判断为不同动作。
+func judge_hit_score(mf_object: MfObject) -> int:##（工具）判定打击评分。TouchArea检测到触控可通过   数组 或 参数  转递信息（动作时刻）到此集中处理，根据不同State自动条件判断为不同动作。
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var jugde_timing = mf_object.jugde_timing[mf_object.jugde_timing_index]##此判定点的时刻
 	

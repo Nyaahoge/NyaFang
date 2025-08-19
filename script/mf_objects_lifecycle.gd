@@ -112,7 +112,7 @@ func _get_mf_object_go_to_main_thread() -> void:
 		
 		mf_obj.initialize(json_file_operator.chart_data["mf_objects"][will_get_objects.pop_front()])#初始化对象
 		current_mf_objects.push_back(mf_obj)
-		mf_obj.curve_handling()
+		mf_obj.curve_handling()##先运行一帧此函数，先赋值一些值，防止闪一下原图形。
 		mf_obj.show()#显示对象（如果之前被隐藏）
 		
 		#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  添加成功  ", mf_obj)

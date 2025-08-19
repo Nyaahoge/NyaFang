@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ddgliw4e0hnci"]
+[gd_scene load_steps=14 format=3 uid="uid://ddgliw4e0hnci"]
 
 [ext_resource type="PackedScene" uid="uid://c2qhse11rvirg" path="res://scene/mf_object.tscn" id="1_igr8s"]
 
@@ -33,6 +33,37 @@ _data = {
 }
 point_count = 6
 
+[sub_resource type="Curve" id="Curve_lriw2"]
+_limits = [0.0, 1.0, 3.0, 60.0]
+_data = [Vector2(3, 0), 0.0, 0.0176127, 0, 0, Vector2(60, 1), 0.0174716, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_uk6l5"]
+_limits = [0.0, 600.0, 3.0, 60.0]
+_data = [Vector2(3, 600), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve" id="Curve_25xxw"]
+_limits = [0.0, 300.0, 3.0, 60.0]
+_data = [Vector2(3, 300), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve" id="Curve_2sn1k"]
+_limits = [0.0, 1000.0, 3.0, 60.0]
+_data = [Vector2(3, 0), 0.0, 0.0, 0, 0, Vector2(22.5938, 1000), 0.0, 0.0, 0, 0, Vector2(60, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_pirp7"]
+_limits = [0.0, 1.0, 3.0, 60.0]
+_data = [Vector2(3, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve2D" id="Curve2D_lq4ul"]
+_data = {
+"points": PackedVector2Array(33.8461, -196.82, -33.8461, 196.82, 469, -245, 212.464, -117.834, -212.464, 117.834, 150, 296, 103.818, 141.436, -103.818, -141.436, -438, 198)
+}
+point_count = 3
+
 [node name="TempChartMfObjects" type="Node2D"]
 
 [node name="MfObject" parent="." instance=ExtResource("1_igr8s")]
@@ -54,4 +85,24 @@ curve = SubResource("Curve2D_hqrlo")
 [node name="PathFollow2D" parent="MfObject/MoveCurve" index="0"]
 position = Vector2(-440, -250)
 
+[node name="MfObject2" parent="." instance=ExtResource("1_igr8s")]
+mf_object_type = 2
+exist_period = {
+"over": 60.0,
+"start": 3.0
+}
+jugde_timing = [0.0, 0.0, 0.0, 0.0, 0.0]
+progress_ratio_curve = SubResource("Curve_lriw2")
+length_curve = SubResource("Curve_uk6l5")
+width_curve = SubResource("Curve_25xxw")
+rotation_curve = SubResource("Curve_2sn1k")
+opacity_curve = SubResource("Curve_pirp7")
+
+[node name="MoveCurve" parent="MfObject2" index="0"]
+curve = SubResource("Curve2D_lq4ul")
+
+[node name="PathFollow2D" parent="MfObject2/MoveCurve" index="0"]
+position = Vector2(469, -245)
+
 [editable path="MfObject"]
+[editable path="MfObject2"]

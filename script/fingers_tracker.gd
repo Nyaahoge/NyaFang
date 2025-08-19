@@ -17,7 +17,7 @@ func _input(event: InputEvent) -> void:
 	
 func _physics_process(delta: float) -> void:
 	hold_action_fingers_states()
-	#print(hit_jugdment.tap_in_or_hold_in_mf_objects_priority)
+	#print(hit_jugdment.tap_action_mf_objects_priority)
 	#print(fingers)
 
 
@@ -80,8 +80,8 @@ func tap_action_fingers_states(event: InputEvent):
 		#if event.pressed:
 			#print("手指按下")
 			#var i: int = 0#（临时）
-			#while i < hit_jugdment.tap_in_or_hold_in_mf_objects_priority.size():
-				#var mf_obj = hit_jugdment.tap_in_or_hold_in_mf_objects_priority[i]
+			#while i < hit_jugdment.tap_action_mf_objects_priority.size():
+				#var mf_obj = hit_jugdment.tap_action_mf_objects_priority[i]
 				#if is_in_mf_object(event.position, mf_obj):
 					#print("in")
 					#hit_jugdment.remove_from_priority(mf_obj)
@@ -106,8 +106,8 @@ func tap_action_fingers_states(event: InputEvent):
 				#print("鼠标左键按下")
 				#var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
 				#var i: int = 0#（临时）
-				#while i < hit_jugdment.tap_in_or_hold_in_mf_objects_priority.size():
-					#var mf_obj = hit_jugdment.tap_in_or_hold_in_mf_objects_priority[i]
+				#while i < hit_jugdment.tap_action_mf_objects_priority.size():
+					#var mf_obj = hit_jugdment.tap_action_mf_objects_priority[i]
 					#if is_in_mf_object(finger_position, mf_obj):##注意把事件位置变换成世界坐标
 						#print("in")
 						#hit_jugdment.remove_from_priority(mf_obj)
