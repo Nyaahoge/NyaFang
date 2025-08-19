@@ -7,15 +7,17 @@ extends Node
 
 enum HitScore {##枚举打击评分（包括miss）
 	PERFECT,
-	GOOD,
-	BAD,
-	MISS
+	EARLY_GOOD,
+	LATE_GOOD,
+	EARLY_BAD,
+	LATE_BAD,
+	MISS,
+	NOT
 }
 
 func _physics_process(delta: float) -> void:
-	print("[MfObjectsPriority]    ", tap_in_or_hold_in_mf_objects_priority)
+	#print("[HitJugdment]    ", tap_in_or_hold_in_mf_objects_priority)
 	check_priority_miss()
-
 
 
 
@@ -44,20 +46,21 @@ var track_player_latency_position: float##考虑了谱面延迟的track时刻
 func tap_action_hit_jugdment(finger_position: Vector2):##tap动作的判定
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var i: int = 0##（临时）
-	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject
+	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject（注意：tap动作对最早判定点起作用后就消耗了不会再次判定其他判定点）
 		var mf_obj = tap_in_or_hold_in_mf_objects_priority[i]
 		if is_in_mf_object(finger_position, mf_obj):##若位置上点击到了MfObject，则时间上进行判定分数
 			mf_obj.mf_object_tap_hit(hit_judgment(mf_obj))
+			return
 		i += 1
 
 
-func check_priority_miss():##每帧主动检测tap_in_or_hold_in_mf_objects_priority内MISS的MfObject
+func check_priority_miss():##每帧主动检测tap_in_or_hold_in_mf_objects_priority内所有MfObject，哪些MISS了。
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var i: int = 0##（临时）
 	while i < tap_in_or_hold_in_mf_objects_priority.size():##遍历检查待判定MfObject
 		var mf_obj = tap_in_or_hold_in_mf_objects_priority[i]
 		var jugde_timing = mf_obj.jugde_timing[mf_obj.jugde_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
-		if jugde_timing + game.perfect_window < track_player_latency_position:##判定为MISS
+		if jugde_timing + game.bad_window < track_player_latency_position:##判定为MISS
 			mf_obj.mf_object_tap_miss()
 		i += 1
 
@@ -82,13 +85,19 @@ func hit_judgment(mf_object: MfObject) -> int:##（工具）判定打击评分�
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var jugde_timing = mf_object.jugde_timing[mf_object.jugde_timing_index]##此判定点的时刻
 	
-	match track_player_latency_position:
-		_ when (jugde_timing - game.perfect_window <= track_player_latency_position - game.latency_adjustment && track_player_latency_position - game.latency_adjustment <= jugde_timing + game.perfect_window):
-			return HitScore.PERFECT
+	if jugde_timing - game.perfect_window <= track_player_latency_position && track_player_latency_position <= jugde_timing + game.perfect_window:
+		return HitScore.PERFECT
 		
-		_ when (jugde_timing - game.good_window <= track_player_latency_position - game.latency_adjustment && track_player_latency_position - game.latency_adjustment <= jugde_timing + game.good_window):
-			return HitScore.GOOD
-		
-		_ when (jugde_timing - game.bad_window <= track_player_latency_position - game.latency_adjustment && track_player_latency_position - game.latency_adjustment <= jugde_timing + game.bad_window):
-			return HitScore.BAD
-	return HitScore.BAD
+	if jugde_timing - game.good_window <= track_player_latency_position && track_player_latency_position < jugde_timing - game.perfect_window:
+		return HitScore.EARLY_GOOD
+	
+	if jugde_timing + game.perfect_window < track_player_latency_position && track_player_latency_position <= jugde_timing + game.good_window:
+		return HitScore.LATE_GOOD
+	
+	if track_player_latency_position < jugde_timing - game.good_window:
+		return HitScore.EARLY_BAD
+	
+	if jugde_timing + game.good_window < track_player_latency_position:
+		return HitScore.LATE_BAD
+	print("[HitJugdment]    ", "NOT")
+	return HitScore.NOT##意外值

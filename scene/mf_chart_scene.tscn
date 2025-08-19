@@ -22,7 +22,6 @@ script = ExtResource("6_xb0a0")
 
 [node name="Game" type="Node2D" parent="."]
 script = ExtResource("8_qkehe")
-latency_adjustment = 2.0
 
 [node name="Player" type="Node" parent="Game"]
 script = ExtResource("8_b2fbt")

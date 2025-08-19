@@ -54,11 +54,11 @@ func fingers_tracking(event) -> void:##触屏就检测（检测到后手指坐�
 	
 	##PC端（调试）
 	if OS.get_name() == "Windows":
-		if event is InputEventMouse and Input.is_action_pressed("mouse_hold"):##更新触控点坐标
+		if Input.is_action_pressed("mouse_hold"):##更新触控点坐标
 			var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
-			fingers[0] = finger_position
+			fingers.push_back(finger_position)
 		else:
-			fingers = [null]
+			fingers = []
 	
 	
 	
@@ -95,7 +95,7 @@ func tap_action_fingers_states(event: InputEvent):
 	if OS.get_name() == "Windows":
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-				print("鼠标左键按下")
+				print("[FingersTracker]    ", track_player.thread_track_player_latency_position, "    鼠标左键按下")
 				var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
 				hit_jugdment.tap_action_hit_jugdment(finger_position)
 	

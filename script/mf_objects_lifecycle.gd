@@ -79,7 +79,7 @@ func chack_get_mf_object() -> void:##检查是否要从对象池里获取MfObjec
 		while mf_objects_index + 1 < json_file_operator.chart_data["sum_mf_object_count"] && (thread_track_player_position - game.latency_adjustment) >= json_file_operator.chart_data["mf_objects"][mf_objects_index + 1]["exist_period"]["start"]:
 			will_get_objects.push_back(mf_objects_index + 1)
 			mf_objects_index += 1
-			print("[MfObjectLifecycle]    ", (thread_track_player_position), "  要添加", "一个MfObject")
+			#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  要添加", "一个MfObject")
 	mutex.unlock()
 	call_deferred("_get_mf_object_go_to_main_thread")#线程安全相关节点操作推迟到主线程
 
@@ -93,7 +93,7 @@ func chack_return_mf_object() -> void:##检查是否要把MfObject从谱面上�
 			for i in current_mf_objects:
 				if i not in will_return_objects && (thread_track_player_position - game.latency_adjustment) >= i.exist_period["over"]:
 					will_return_objects.push_back(i)
-					print("[MfObjectLifecycle]    ", (thread_track_player_position), "  要移除", "一个MfObject")
+					#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  要移除", "一个MfObject")
 					
 			call_deferred("_return_mf_object_go_to_main_thread")#线程安全相关节点操作推迟到主线程
 	
@@ -112,9 +112,10 @@ func _get_mf_object_go_to_main_thread() -> void:
 		
 		mf_obj.initialize(json_file_operator.chart_data["mf_objects"][will_get_objects.pop_front()])#初始化对象
 		current_mf_objects.push_back(mf_obj)
+		mf_obj.curve_handling()
 		mf_obj.show()#显示对象（如果之前被隐藏）
 		
-		print("[MfObjectLifecycle]    ", (thread_track_player_position), "  添加成功  ", mf_obj)
+		#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  添加成功  ", mf_obj)
 		mutex.unlock()
 	
 #从谱面移除
@@ -126,7 +127,7 @@ func _return_mf_object_go_to_main_thread() -> void:
 		current_mf_objects.erase(mf_obj)
 		mf_object_pool.return_object(mf_obj)#回收
 		
-		print("[MfObjectLifecycle]    ", (thread_track_player_position), "  移除成功  ", mf_obj)
+		#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  移除成功  ", mf_obj)
 	mutex.unlock()
 	
 
