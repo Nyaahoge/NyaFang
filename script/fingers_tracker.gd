@@ -16,7 +16,7 @@ func _input(event: InputEvent) -> void:
 	fingers_tracking(event)
 	
 func _physics_process(delta: float) -> void:
-	hold_action_fingers_states()
+	touch_action_fingers_states()
 	#print(hit_jugdment.tap_action_mf_objects_priority)
 	#print(fingers)
 
@@ -27,10 +27,9 @@ func _physics_process(delta: float) -> void:
 
 
 
-##触屏手指实时追踪模块（返回到under_finger_mf_objects）（用于支持逻辑判断手指的音游打击操作，用于Drag和Hold的判定，具体思路可直接让激活检测接按操作的MfObject在fingers里遍历坐标确定是否被接按即可。是因为引擎不支持检测手指按着进出Area2D）
+##触屏手指实时追踪模块（用于支持逻辑判断手指的音游打击操作，用于Drag和Hold的判定，具体思路可直接让激活检测接按操作的MfObject在fingers里遍历坐标确定是否被接按即可。是因为引擎不支持检测手指按着进出Area2D）
 #region
 var fingers: Array##（重要）所有触屏手指屏幕位置。下标对应引擎触控点事件的index，若某index无手指则为null。
-var under_finger_mf_objects: Array##触屏手指按到的mf_object
 #func fingers_tracking_initialize() -> void:
 	#pass
 
@@ -56,7 +55,7 @@ func fingers_tracking(event) -> void:##触屏就检测（检测到后手指坐�
 	if OS.get_name() == "Windows":
 		if Input.is_action_pressed("mouse_hold"):##更新触控点坐标
 			var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
-			fingers.push_back(finger_position)
+			fingers = [finger_position]
 		else:
 			fingers = []
 	
@@ -72,7 +71,7 @@ func fingers_tracking(event) -> void:##触屏就检测（检测到后手指坐�
 
 
 
-##tap动作手指触控MfObject判断模块（实时判断手指对MfObject的触控情况）（tap动作（按下）触控点在该函数内直接检测回调判定函数；hold动作（接触到屏幕）触控点把它碰到的键添加进数组后续访问）
+##tap动作手指触控MfObject判断模块（实时判断手指对MfObject的触控情况）（tap动作触控点在该函数内直接检测调用判定函数）
 func tap_action_fingers_states(event: InputEvent):
 	
 	###移动端
@@ -119,11 +118,11 @@ func tap_action_fingers_states(event: InputEvent):
 	
 	
 	#is_in_mf_object()
-	pass
 	
-##hold动作手指触控MfObject判断模块（实时判断手指对MfObject的触控情况）（tap动作触控点在该函数内直接检测回调判定函数；hold动作触控点把它碰到的键添加进数组后续访问）
-func hold_action_fingers_states():
 	
+##touch动作手指触控MfObject判断模块（实时判断手指对MfObject的触控情况）（toush动作触控点把它碰到的键添加进数组后续访问）
+func touch_action_fingers_states():
+	hit_jugdment.touch_action_hit_jugdment()
 	
 	
 	

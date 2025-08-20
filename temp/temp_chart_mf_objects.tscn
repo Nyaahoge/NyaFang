@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://ddgliw4e0hnci"]
+[gd_scene load_steps=20 format=3 uid="uid://ddgliw4e0hnci"]
 
 [ext_resource type="PackedScene" uid="uid://c2qhse11rvirg" path="res://scene/mf_object.tscn" id="1_igr8s"]
 
@@ -64,6 +64,37 @@ _data = {
 }
 point_count = 3
 
+[sub_resource type="Curve" id="Curve_kfhy5"]
+_limits = [0.0, 1.0, 3.0, 60.0]
+_data = [Vector2(3, 0), 0.0, 0.0175439, 0, 1, Vector2(60, 1), 0.0175439, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_03khn"]
+_limits = [0.0, 500.0, 3.0, 60.0]
+_data = [Vector2(3, 500), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve" id="Curve_wb47d"]
+_limits = [0.0, 500.0, 3.0, 60.0]
+_data = [Vector2(3, 500), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve" id="Curve_yr8n3"]
+_limits = [0.0, 1000.0, 3.0, 60.0]
+_data = [Vector2(3, 0), 0.0, 0.0, 0, 0, Vector2(60, 218.287), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_qvcqm"]
+_limits = [0.0, 1.0, 3.0, 60.0]
+_data = [Vector2(3, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve2D" id="Curve2D_t5it3"]
+_data = {
+"points": PackedVector2Array(2.48701, 98.494, -2.48701, -98.494, -9, 101, -53.065, 55.902, 53.065, -55.902, 73, -151, -96.988, 11.979, 96.988, -11.979, 324, -269)
+}
+point_count = 3
+
 [node name="TempChartMfObjects" type="Node2D"]
 
 [node name="MfObject" parent="." instance=ExtResource("1_igr8s")]
@@ -91,7 +122,7 @@ exist_period = {
 "over": 60.0,
 "start": 3.0
 }
-jugde_timing = [0.0, 0.0, 0.0, 0.0, 0.0]
+jugde_timing = [7.5, 7.969, 8.437, 8.906, 9.375]
 progress_ratio_curve = SubResource("Curve_lriw2")
 length_curve = SubResource("Curve_uk6l5")
 width_curve = SubResource("Curve_25xxw")
@@ -104,5 +135,26 @@ curve = SubResource("Curve2D_lq4ul")
 [node name="PathFollow2D" parent="MfObject2/MoveCurve" index="0"]
 position = Vector2(469, -245)
 
+[node name="MfObject3" parent="." instance=ExtResource("1_igr8s")]
+mf_object_type = 3
+exist_period = {
+"over": 60.0,
+"start": 3.0
+}
+jugde_timing = [16.875]
+hold_release_timing = [18.75]
+progress_ratio_curve = SubResource("Curve_kfhy5")
+length_curve = SubResource("Curve_03khn")
+width_curve = SubResource("Curve_wb47d")
+rotation_curve = SubResource("Curve_yr8n3")
+opacity_curve = SubResource("Curve_qvcqm")
+
+[node name="MoveCurve" parent="MfObject3" index="0"]
+curve = SubResource("Curve2D_t5it3")
+
+[node name="PathFollow2D" parent="MfObject3/MoveCurve" index="0"]
+position = Vector2(-9, 101)
+
 [editable path="MfObject"]
 [editable path="MfObject2"]
+[editable path="MfObject3"]

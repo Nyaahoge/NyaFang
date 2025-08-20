@@ -349,18 +349,18 @@ func mf_object_hit(hitscore: int):##打击判定到了
 		MfObjectType.TAP:
 			tap_mf_object_hit(hitscore)
 		MfObjectType.DRAG:
-			pass
-		MfObjectType.HOLD:
+			drag_mf_object_hit(hitscore)
+		MfObjectType.HOLD:##还要按状态分
 			pass
 
 
-func mf_object_miss():##MISS了
+func mf_object_miss(hitscore: int):##MISS了（虽然是判定MISS，但还是按形式来吧）
 	match mf_object_type:
 		MfObjectType.TAP:
-			tap_mf_object_miss()
+			tap_mf_object_miss(hitscore)
 		MfObjectType.DRAG:
-			pass
-		MfObjectType.HOLD:
+			drag_mf_object_miss(hitscore)
+		MfObjectType.HOLD:##还要按状态分
 			pass
 
 
@@ -391,28 +391,40 @@ func tap_mf_object_hit(hitscore: int):##（被动调用）Tap类型MfObject被�
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
 	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
 		is_hit_jugement_over = true
-		print("1")
+		print("所有判定点已结束")
 
-func tap_mf_object_miss():##（被动调用）Tap类型MfObject被判定为MISS,自己要执行的程序（注意：Tap和Hold要分别执行）
+func tap_mf_object_miss(hitscore: int):##（被动调用）Tap类型MfObject被判定为MISS,自己要执行的程序（注意：Tap和Hold要分别执行）
 	hit_jugdment.remove_from_priority(self)
-	judge_timing_hit_score.push_back(hit_jugdment.HitScore.MISS)
+	judge_timing_hit_score.push_back(hitscore)
 	jugde_timing_index += 1
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
 	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
 		is_hit_jugement_over = true
-		print("所有打击判定点已结束")
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 
 
 
 
-func drag_mf_object_hit(hitscore: int):##Drag类型MfObject被打击判定到了
-	pass
+func drag_mf_object_hit(hitscore: int):##Drag类型MfObject被打击判定到了（虽然Drag打击判定到了肯定是PERFECT，但还是按形式来吧）
+	hit_jugdment.remove_from_touch(self)
+	judge_timing_hit_score.push_back(hitscore)
+	jugde_timing_index += 1
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
+	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
+		is_hit_jugement_over = true
+		print("所有判定点已结束")
 
 
-func drag_mf_object_miss():##Drag类型MfObject被判定为MISS
-	pass
+func drag_mf_object_miss(hitscore: int):##Drag类型MfObject被判定为MISS
+	hit_jugdment.remove_from_touch(self)
+	judge_timing_hit_score.push_back(hitscore)
+	jugde_timing_index += 1
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
+	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
+		is_hit_jugement_over = true
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 

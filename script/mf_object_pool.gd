@@ -61,7 +61,7 @@ func get_object() -> Object:##（外部调用）取出对象
 
 func return_object(obj: Object) -> void:##（外部调用）回收对象
 	if obj and (mf_objects_initial_size == -1 or free_mf_objects.size() < mf_objects_initial_size):
-		obj.is_need_show = true
+		#obj.is_need_show = true
 		obj.hide()
 		obj.set_process(false)      # 停止 _process 调用
 		obj.set_physics_process(false)  # 停止 _physics_process 调用

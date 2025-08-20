@@ -1,3 +1,5 @@
+##此节点平常用于解析谱面文件。
+##在没有制谱器时可用于暂时制谱：parse_or_save_to_json_file关闭启用，在MfObjects下挂MfObject子场景，运行项目之后成功保存。
 ##注：场景树中，此节点放在MfObjects的后面，是因为如果要用保存json文件功能就需要在MfObjects以及它的节点都加载完毕之后才运行这个脚本
 
 extends Node
