@@ -102,6 +102,17 @@ func _ready() -> void:
 	set_process(false)#停止 _process()调用
 	set_physics_process(false)#停止 _physics_process()调用
 
+func _process(_delta: float) -> void:
+	curve_handling()
+
+func _physics_process(_delta: float) -> void:
+	judgment_state_detection()
+
+
+
+
+
+
 func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化（就是从对象池拿出来复用时的初始化），参数为要导入的MfObject的字典
 	##主要值的初始化设置
 	mf_object_type = dictionary["mf_object_type"]
@@ -137,20 +148,6 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 		MfObjectType.HOLD:
 			hold_shape.z_index = 200 if mf_z_index == -1 else mf_z_index
 			hold_shape.visible = true
-
-
-
-func _process(_delta: float) -> void:
-	curve_handling()
-
-func _physics_process(_delta: float) -> void:
-	judgment_state_detection()
-
-
-
-
-
-
 
 
 ##形态、运动、触控区域 模块
@@ -252,8 +249,7 @@ var hold_head_judge_timing_hit_score: Array##记录每次Hold头部判定的评�
 func judgment_state_detection() -> void:##State检测
 	
 	
-	#print(track_player.get_playback_position())
-	if not is_hit_jugement_over:##所有打击判定点未结束，则运行打击判定等相关模块
+	if not mf_object_type == MfObjectType.BOX and not is_hit_jugement_over:##非Box 且 所有打击判定点未结束，则运行打击判定等相关模块
 		
 		track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 		#var is_in_jugde_timing_bad_window = jugde_timing[jugde_timing_index] - game.bad_window <= track_player.thread_track_player_latency_position && track_player.thread_track_player_latency_position <= jugde_timing[jugde_timing_index] + game.bad_window##是否处于jugde_timing判定期
@@ -281,43 +277,15 @@ func judgment_state_detection() -> void:##State检测
 					#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_priority(self)")
 					hit_jugdment.add_to_priority(self)
 					add_to_tap_priority_index += 1
-					
-			
-			
-			
 			
 			
 			
 			MfObjectType.DRAG:
 				##检测判定点上传
 				while add_to_tap_priority_index < jugde_timing.size() && jugde_timing[add_to_tap_priority_index] - game.bad_window <= track_player.thread_track_player_latency_position:##（防越界）有判定点处于判定窗口（注意，当然是按bad_window来算的），则加入tap_action_mf_objects_priority排队。
-					#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_priority(self)")
+					#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_touch(self)")
 					hit_jugdment.add_to_touch(self)
 					add_to_tap_priority_index += 1
-			
-			
-			
-			
-			
-			#MfObjectType.DRAG:
-				#if is_in_jugde_timing_bad_window and judge_timing_hit_score.size() <= jugde_timing_index:##处于判定期 同时 当前判定点还未被评分
-					#if not current_state == State.DRAG_IN:
-						#current_state = State.DRAG_IN
-				#else:
-					#
-					#if current_state == State.DRAG_IN and judge_timing_hit_score.size() <= jugde_timing_index:
-						#judge_timing_hit_score.push_back(HitScore.MISS)
-						#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
-						#jugde_timing_index += 1
-						#if jugde_timing_index >= jugde_timing.size():
-							#is_hit_jugement_over = true
-							#print("is_hit_jugement_over == true")
-					#
-					#if not current_state == State.NOT:
-						#current_state = State.NOT
-			
-			
-			
 			
 			
 			
@@ -327,6 +295,7 @@ func judgment_state_detection() -> void:##State检测
 					#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_priority(self)")
 					hit_jugdment.add_to_priority(self)
 					add_to_tap_priority_index += 1
+					current_state = State.HOLD_IN
 			
 			
 			
@@ -351,18 +320,20 @@ func mf_object_hit(hitscore: int):##打击判定到了
 		MfObjectType.DRAG:
 			drag_mf_object_hit(hitscore)
 		MfObjectType.HOLD:##还要按状态分
-			pass
+			hold_mf_object_miss()
 
 
-func mf_object_miss(hitscore: int):##MISS了（虽然是判定MISS，但还是按形式来吧）
+func mf_object_miss(hitscore: int):##MISS了（虽然知道判定的MISS，但还是按形式来吧）
 	match mf_object_type:
 		MfObjectType.TAP:
 			tap_mf_object_miss(hitscore)
 		MfObjectType.DRAG:
 			drag_mf_object_miss(hitscore)
 		MfObjectType.HOLD:##还要按状态分
-			pass
-
+			if current_state == State.HOLD_IN:
+				hold_mf_object_hold_in_hit(hitscore)
+			if current_state == State.HOLD_KEEP:
+				hold_mf_object_hold_keep_hit(hitscore)
 
 
 
@@ -389,16 +360,20 @@ func tap_mf_object_hit(hitscore: int):##（被动调用）Tap类型MfObject被�
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
 		HitJugdment.HitScore.NOT:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
-	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
+	##检测所有打击判定点是否已结束
+	if judge_timing_hit_score.size() == jugde_timing.size():
 		is_hit_jugement_over = true
-		print("所有判定点已结束")
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
+
 
 func tap_mf_object_miss(hitscore: int):##（被动调用）Tap类型MfObject被判定为MISS,自己要执行的程序（注意：Tap和Hold要分别执行）
 	hit_jugdment.remove_from_priority(self)
 	judge_timing_hit_score.push_back(hitscore)
 	jugde_timing_index += 1
+	##根据打击判定MISS评分执行程序
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
-	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
+	##检测所有打击判定点是否已结束
+	if judge_timing_hit_score.size() == jugde_timing.size():
 		is_hit_jugement_over = true
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
@@ -412,17 +387,20 @@ func drag_mf_object_hit(hitscore: int):##Drag类型MfObject被打击判定到了
 	judge_timing_hit_score.push_back(hitscore)
 	jugde_timing_index += 1
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
-	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
+	##检测所有打击判定点是否已结束
+	if judge_timing_hit_score.size() == jugde_timing.size():
 		is_hit_jugement_over = true
-		print("所有判定点已结束")
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 func drag_mf_object_miss(hitscore: int):##Drag类型MfObject被判定为MISS
 	hit_jugdment.remove_from_touch(self)
 	judge_timing_hit_score.push_back(hitscore)
 	jugde_timing_index += 1
+	##根据打击判定MISS评分执行程序
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
-	if add_to_tap_priority_index >= jugde_timing.size():##检测所有打击判定点是否已结束
+	##检测所有打击判定点是否已结束
+	if judge_timing_hit_score.size() == jugde_timing.size():
 		is_hit_jugement_over = true
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
@@ -433,15 +411,67 @@ func drag_mf_object_miss(hitscore: int):##Drag类型MfObject被判定为MISS
 
 
 func hold_mf_object_hold_in_hit(hitscore: int):##处于HOLD_IN的Hold类型MfObject被打击判定到了
-	pass
+	hit_jugdment.remove_from_priority(self)
+	hold_head_judge_timing_hit_score.push_back(hitscore)##Hold头部评分
+	jugde_timing_index += 1
+	match hitscore:##根据打击判定评分执行各自程序
+		HitJugdment.HitScore.PERFECT:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
+		HitJugdment.HitScore.EARLY_GOOD :
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_GOOD")
+		HitJugdment.HitScore.LATE_GOOD :
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_GOOD")
+		HitJugdment.HitScore.EARLY_BAD:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_BAD")
+		HitJugdment.HitScore.LATE_BAD:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
+		HitJugdment.HitScore.NOT:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
+	
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_touch(self)")
+	hit_jugdment.add_to_touch(self)
+	current_state = State.HOLD_KEEP
+	
+	if judge_timing_hit_score.size() == jugde_timing.size():
+		is_hit_jugement_over = true
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 func hold_mf_object_hold_keep_hit(hitscore: int):##处于HOLD_KEEP的Hold类型MfObject被打击判定到了
-	pass
+	##若还处于HOLD_KEEP
+	if track_player.thread_track_player_latency_position < hold_release_timing[hold_release_timing_index] - game.bad_window:
+		pass
+	##HOLD_KEEP结束
+	else:
+		hit_jugdment.remove_from_touch(self)
+		judge_timing_hit_score.push_back(hitscore)
+		hold_release_timing_index += 1
+		match hitscore:##根据打击判定评分执行各自程序
+			HitJugdment.HitScore.PERFECT:
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
+			HitJugdment.HitScore.EARLY_GOOD :
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_GOOD")
+			HitJugdment.HitScore.LATE_GOOD :
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_GOOD")
+			HitJugdment.HitScore.EARLY_BAD:
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_BAD")
+			HitJugdment.HitScore.LATE_BAD:
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
+			HitJugdment.HitScore.NOT:
+				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
+		
+		current_state = State.NOT
 
 
-func hold_mf_object_miss():##Hold类型MfObject被判定为MISS（注意要考虑两种原因MISS的情况）
-	pass
+func hold_mf_object_miss(hitscore: int):##Hold类型MfObject被判定为MISS（注意要考虑两种原因MISS的情况）
+	if current_state == State.HOLD_IN:
+		hit_jugdment.remove_from_priority(self)
+		hold_head_judge_timing_hit_score.push_back(hitscore)##Hold头部评分
+		jugde_timing_index += 1
+	
+	
+	if current_state == State.HOLD_KEEP:
+		
 
 
 

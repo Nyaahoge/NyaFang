@@ -5,6 +5,12 @@
 
 [node name="MfObject" type="Node2D"]
 script = ExtResource("1_0dxp5")
+mf_object_type = null
+exist_period = null
+jugde_timing = null
+hold_release_timing = null
+mf_z_index = null
+thickness = null
 
 [node name="MoveCurve" type="Path2D" parent="."]
 

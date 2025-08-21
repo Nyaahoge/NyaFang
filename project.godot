@@ -24,6 +24,10 @@ window/stretch/mode="canvas_items"
 
 enabled=PackedStringArray()
 
+[gui]
+
+theme/custom_font="uid://cq0l1ka8j0h7b"
+
 [input]
 
 mouse_hold={
