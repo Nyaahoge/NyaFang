@@ -18,10 +18,10 @@ enum HitScore {##枚举打击评分（包括miss）
 #func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
+	print("[HitJugdment]    ", tap_action_mf_objects_priority, "    ", touch_action_mf_objects)
 	#print("[HitJugdment]    ", tap_action_mf_objects_priority)
 	check_priority_miss()
 	check_touch_miss()
-	#print("[HitJugdment]    ", touch_action_mf_objects)
 
 
 
@@ -90,28 +90,33 @@ func touch_action_hit_jugdment():
 	var i: int = 0##（临时）
 	while i < touch_action_mf_objects.size():##遍历检查待判定MfObject（注意：touch动作会同时对所有被判定的判定点起作用）
 		var mf_obj = touch_action_mf_objects[i]
+		var is_hold_touch_action_hit: bool = false
 		for pos in fingers_tracker.fingers:
 			if not pos is Vector2:##如果是null则跳过
 				continue
 			if is_in_mf_object(pos, mf_obj):##若位置上点击到了MfObject，则时间上进行判定分数
 				mf_obj.mf_object_hit(HitScore.PERFECT)##Drag型MfObject受touch动作直接判定为PERFECT
-				pass#hold_keep
+				is_hold_touch_action_hit = true
 				break
+		if mf_obj.mf_object_type == MfObject.MfObjectType.HOLD and not is_hold_touch_action_hit:##Hold机制需要每帧判断是否按着
+			mf_obj.mf_object_miss(HitScore.MISS)
 		i += 1
 
-func check_touch_miss():##每帧主动检测touch_action_mf_objects内所有MfObject，哪些MISS了。
+func check_touch_miss():##每帧主动检测touch_action_mf_objects内所有 非Hold MfObject，哪些MISS了。
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	var i: int = 0##（临时）
 	while i < touch_action_mf_objects.size():##遍历检查待判定MfObject
 		var mf_obj = touch_action_mf_objects[i]
+		if mf_obj.mf_object_type == MfObject.MfObjectType.HOLD:##此判定函数需要非Hold，Hold需要专门函数
+			i += 1
+			continue
 		var jugde_timing = mf_obj.jugde_timing[mf_obj.jugde_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
 		if jugde_timing + game.bad_window < track_player_latency_position:##判定为MISS
 			mf_obj.mf_object_miss(HitScore.MISS)
-			pass#hold_keep
 		i += 1
 
-
-
+#func hold_touch_action_hit_jugdment(mf_obj: MfObject):##每帧主动检测touch_action_mf_objects内所有 Hold ，哪些MISS了，每帧判断是否按着
+	#var hold_release_timing = mf_obj.hold_release_timing[mf_obj.hold_release_timing_index]
 
 
 

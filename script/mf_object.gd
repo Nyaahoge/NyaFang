@@ -24,6 +24,8 @@ enum State {##枚举当前状态，状态处理这里直接状态式编程，没
 	DRAG_IN,##Drag的判定中状态（判定后立即变为NOT状态（击中或miss））
 	HOLD_IN,##Hold的一阶段判定中状态（判定后立即变为HOLD_AFTER状态（击中或miss））
 	HOLD_KEEP,##Hold的长按状态，处于HOLD_IN与HOLD_OUT之间的连续段
+	HOLD_IN_MISS,##MISS了的HOLD_IN（判定后立即变为HOLD_AFTER状态（击中或miss））
+	HOLD_KEEP_MISS,##MISS了的HOLD_KEEP
 	HOLD_OUT,##Hold的二阶段判定中状态（判定后立即变为NOT状态（击中或miss））
 }
 
@@ -260,8 +262,10 @@ func judgment_state_detection() -> void:##State检测
 		#if is_in_jugde_timing_bad_window:
 			#print(track_player.get_playback_position())
 			
-			
-			
+		
+		
+		
+		##上传判定点模块
 		##（重要）注意在tap_action_mf_objects_priority上的添加与删除
 		match mf_object_type:
 			
@@ -320,7 +324,10 @@ func mf_object_hit(hitscore: int):##打击判定到了
 		MfObjectType.DRAG:
 			drag_mf_object_hit(hitscore)
 		MfObjectType.HOLD:##还要按状态分
-			hold_mf_object_miss()
+			if current_state == State.HOLD_IN:
+				hold_mf_object_hold_in_hit(hitscore)
+			if current_state == State.HOLD_KEEP:
+				hold_mf_object_hold_keep_hit(hitscore)
 
 
 func mf_object_miss(hitscore: int):##MISS了（虽然知道判定的MISS，但还是按形式来吧）
@@ -330,10 +337,7 @@ func mf_object_miss(hitscore: int):##MISS了（虽然知道判定的MISS，但�
 		MfObjectType.DRAG:
 			drag_mf_object_miss(hitscore)
 		MfObjectType.HOLD:##还要按状态分
-			if current_state == State.HOLD_IN:
-				hold_mf_object_hold_in_hit(hitscore)
-			if current_state == State.HOLD_KEEP:
-				hold_mf_object_hold_keep_hit(hitscore)
+			hold_mf_object_miss(hitscore)
 
 
 
@@ -350,9 +354,9 @@ func tap_mf_object_hit(hitscore: int):##（被动调用）Tap类型MfObject被�
 	match hitscore:##根据打击判定评分执行各自程序
 		HitJugdment.HitScore.PERFECT:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
-		HitJugdment.HitScore.EARLY_GOOD :
+		HitJugdment.HitScore.EARLY_GOOD:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_GOOD")
-		HitJugdment.HitScore.LATE_GOOD :
+		HitJugdment.HitScore.LATE_GOOD:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_GOOD")
 		HitJugdment.HitScore.EARLY_BAD:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_BAD")
@@ -416,25 +420,21 @@ func hold_mf_object_hold_in_hit(hitscore: int):##处于HOLD_IN的Hold类型MfObj
 	jugde_timing_index += 1
 	match hitscore:##根据打击判定评分执行各自程序
 		HitJugdment.HitScore.PERFECT:
-			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
-		HitJugdment.HitScore.EARLY_GOOD :
-			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_GOOD")
-		HitJugdment.HitScore.LATE_GOOD :
-			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_GOOD")
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN PERFECT")
+		HitJugdment.HitScore.EARLY_GOOD:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN EARLY_GOOD")
+		HitJugdment.HitScore.LATE_GOOD:
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN LATE_GOOD")
 		HitJugdment.HitScore.EARLY_BAD:
-			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_BAD")
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN EARLY_BAD")
 		HitJugdment.HitScore.LATE_BAD:
-			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN LATE_BAD")
 		HitJugdment.HitScore.NOT:
-			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN LATE_BAD")
 	
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_touch(self)")
 	hit_jugdment.add_to_touch(self)
 	current_state = State.HOLD_KEEP
-	
-	if judge_timing_hit_score.size() == jugde_timing.size():
-		is_hit_jugement_over = true
-		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 func hold_mf_object_hold_keep_hit(hitscore: int):##处于HOLD_KEEP的Hold类型MfObject被打击判定到了
@@ -444,14 +444,16 @@ func hold_mf_object_hold_keep_hit(hitscore: int):##处于HOLD_KEEP的Hold类型M
 	##HOLD_KEEP结束
 	else:
 		hit_jugdment.remove_from_touch(self)
-		judge_timing_hit_score.push_back(hitscore)
+		var hold_head_hitscore = hold_head_judge_timing_hit_score[-1]
+		judge_timing_hit_score.push_back(hold_head_hitscore)##（重要）若未MISS，则最终评分按头判的评分算。
 		hold_release_timing_index += 1
-		match hitscore:##根据打击判定评分执行各自程序
+		current_state = State.NOT
+		match hold_head_hitscore:##根据打击判定评分执行各自程序
 			HitJugdment.HitScore.PERFECT:
 				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
-			HitJugdment.HitScore.EARLY_GOOD :
+			HitJugdment.HitScore.EARLY_GOOD:
 				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_GOOD")
-			HitJugdment.HitScore.LATE_GOOD :
+			HitJugdment.HitScore.LATE_GOOD:
 				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_GOOD")
 			HitJugdment.HitScore.EARLY_BAD:
 				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is EARLY_BAD")
@@ -460,18 +462,41 @@ func hold_mf_object_hold_keep_hit(hitscore: int):##处于HOLD_KEEP的Hold类型M
 			HitJugdment.HitScore.NOT:
 				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is LATE_BAD")
 		
-		current_state = State.NOT
+		##检测所有打击判定点是否已结束
+		if judge_timing_hit_score.size() == jugde_timing.size():
+			is_hit_jugement_over = true
+			#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 func hold_mf_object_miss(hitscore: int):##Hold类型MfObject被判定为MISS（注意要考虑两种原因MISS的情况）
-	if current_state == State.HOLD_IN:
+	if current_state == State.HOLD_IN:##情况1.未打击Hold头部
 		hit_jugdment.remove_from_priority(self)
 		hold_head_judge_timing_hit_score.push_back(hitscore)##Hold头部评分
 		jugde_timing_index += 1
-	
-	
-	if current_state == State.HOLD_KEEP:
+		judge_timing_hit_score.push_back(hitscore)##最终评分
+		hold_release_timing_index += 1
+		current_state = State.HOLD_IN_MISS
 		
+		##根据HOLD_IN_MISS评分执行程序
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN MISS")
+
+	
+	
+	if current_state == State.HOLD_KEEP:##情况2.在尾判前释放
+		hit_jugdment.remove_from_touch(self)
+		judge_timing_hit_score.push_back(hitscore)
+		hold_release_timing_index += 1
+		current_state = State.HOLD_KEEP_MISS
+		
+		##根据HOLD_KEEP_MISS评分执行程序
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
+	
+	
+	
+	##检测所有打击判定点是否已结束
+	if judge_timing_hit_score.size() == jugde_timing.size():
+		is_hit_jugement_over = true
+		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
 
