@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ddgliw4e0hnci"]
+[gd_scene load_steps=26 format=3 uid="uid://ddgliw4e0hnci"]
 
 [ext_resource type="PackedScene" uid="uid://c2qhse11rvirg" path="res://scene/mf_object.tscn" id="1_igr8s"]
 
@@ -95,6 +95,37 @@ _data = {
 }
 point_count = 3
 
+[sub_resource type="Curve" id="Curve_6sg3h"]
+_limits = [0.0, 1.0, 4.0, 80.0]
+_data = [Vector2(4, 0), 0.0, 0.0, 0, 0, Vector2(80, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_tblox"]
+_limits = [0.0, 1000.0, 4.0, 80.0]
+_data = [Vector2(4, 400), 0.0, 0.0, 0, 0, Vector2(80, 1000), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_p58w6"]
+_limits = [0.0, 1000.0, 4.0, 80.0]
+_data = [Vector2(4, 400), 0.0, 0.0, 0, 0, Vector2(80, 1000), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_yhyia"]
+_limits = [0.0, 4000.0, 4.0, 80.0]
+_data = [Vector2(4, 0), 0.0, 0.0, 0, 0, Vector2(20.0312, 4000), 0.0, 0.0, 0, 0, Vector2(80, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_lt2yv"]
+_limits = [0.0, 1.0, 4.0, 80.0]
+_data = [Vector2(4, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve2D" id="Curve2D_536yo"]
+_data = {
+"points": PackedVector2Array(-247.506, -18.8306, 247.506, 18.8306, -1237, -560, -56.4917, -471.194, 56.4917, 471.194, 1132, -99, 84.3079, -6.27686, -84.3079, 6.27686, -67, 469)
+}
+point_count = 3
+
 [node name="TempChartMfObjects" type="Node2D"]
 
 [node name="MfObject" parent="." instance=ExtResource("1_igr8s")]
@@ -155,6 +186,24 @@ curve = SubResource("Curve2D_t5it3")
 [node name="PathFollow2D" parent="MfObject3/MoveCurve" index="0"]
 position = Vector2(-9, 101)
 
+[node name="MfObject4" parent="." instance=ExtResource("1_igr8s")]
+exist_period = {
+"over": 80.0,
+"start": 4.0
+}
+progress_ratio_curve = SubResource("Curve_6sg3h")
+length_curve = SubResource("Curve_tblox")
+width_curve = SubResource("Curve_p58w6")
+rotation_curve = SubResource("Curve_yhyia")
+opacity_curve = SubResource("Curve_lt2yv")
+
+[node name="MoveCurve" parent="MfObject4" index="0"]
+curve = SubResource("Curve2D_536yo")
+
+[node name="PathFollow2D" parent="MfObject4/MoveCurve" index="0"]
+position = Vector2(-1237, -560)
+
 [editable path="MfObject"]
 [editable path="MfObject2"]
 [editable path="MfObject3"]
+[editable path="MfObject4"]

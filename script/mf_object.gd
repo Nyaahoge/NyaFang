@@ -1,6 +1,7 @@
 ##（自拟）喵方对象
 ##MfObject：note们及box的统一名称，当时没有抽象，现在已经迟了，不管了先。
 ##因为会导致抖动所以不考虑AudioServer.get_time_since_last_mix()
+##（注意）exist_period理应跟opacity_curve分开考虑，不要直接把exist_period作为是否渲染出来这个功能用，应该以opacity_curve为准。这一点也是为了防止渲染出现延迟而闪图像、时刻对不上等情况。
 
 ##MfObject详情：
 ##Hold无尾判
@@ -41,44 +42,44 @@ enum State {##枚举当前状态，状态处理这里直接状态式编程，没
 
 @onready var move_curve: Path2D = $MoveCurve
 @onready var path_follow_2d: PathFollow2D = $MoveCurve/PathFollow2D
-@onready var touch_area: Area2D = $MoveCurve/PathFollow2D/TouchArea
-@onready var collision_polygon_2d: CollisionPolygon2D = $MoveCurve/PathFollow2D/TouchArea/CollisionPolygon2D
+#@onready var touch_area: Area2D = $MoveCurve/PathFollow2D/TouchArea##（触控判定换了思路，不用此了）TouchArea的碰撞体直接用Drag的图形
+#@onready var collision_polygon_2d: CollisionPolygon2D = $MoveCurve/PathFollow2D/TouchArea/CollisionPolygon2D##（触控判定换了思路，不用此了）TouchArea的碰撞体直接用Drag的图形
 
 
 
 
-@onready var shape: Node2D = $MoveCurve/PathFollow2D/Shape
+@onready var shape: Node2D = $Shape
 
-@onready var box_shape: Node2D = $MoveCurve/PathFollow2D/Shape/BoxShape
-@onready var b_right_0: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BRight0
-@onready var b_top_0: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BTop0
-@onready var b_left_0: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BLeft0
-@onready var b_bottom_0: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BBottom0
-@onready var b_right_1: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BRight1
-@onready var b_top_1: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BTop1
-@onready var b_left_1: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BLeft1
-@onready var b_bottom_1: Polygon2D = $MoveCurve/PathFollow2D/Shape/BoxShape/BBottom1
+@onready var box_shape: Node2D = $Shape/BoxShape
+@onready var b_right_0: Polygon2D = $Shape/BoxShape/BRight0
+@onready var b_top_0: Polygon2D = $Shape/BoxShape/BTop0
+@onready var b_left_0: Polygon2D = $Shape/BoxShape/BLeft0
+@onready var b_bottom_0: Polygon2D = $Shape/BoxShape/BBottom0
+@onready var b_right_1: Polygon2D = $Shape/BoxShape/BRight1
+@onready var b_top_1: Polygon2D = $Shape/BoxShape/BTop1
+@onready var b_left_1: Polygon2D = $Shape/BoxShape/BLeft1
+@onready var b_bottom_1: Polygon2D = $Shape/BoxShape/BBottom1
 
-@onready var tap_shape: Node2D = $MoveCurve/PathFollow2D/Shape/TapShape
-@onready var t_body: Polygon2D = $MoveCurve/PathFollow2D/Shape/TapShape/TBody
-@onready var t_top_right: Polygon2D = $MoveCurve/PathFollow2D/Shape/TapShape/TTopRight
-@onready var t_top_left: Polygon2D = $MoveCurve/PathFollow2D/Shape/TapShape/TTopLeft
-@onready var t_bottom_left: Polygon2D = $MoveCurve/PathFollow2D/Shape/TapShape/TBottomLeft
-@onready var t_bottom_right: Polygon2D = $MoveCurve/PathFollow2D/Shape/TapShape/TBottomRight
+@onready var tap_shape: Node2D = $Shape/TapShape
+@onready var t_body: Polygon2D = $Shape/TapShape/TBody
+@onready var t_top_right: Polygon2D = $Shape/TapShape/TTopRight
+@onready var t_top_left: Polygon2D = $Shape/TapShape/TTopLeft
+@onready var t_bottom_left: Polygon2D = $Shape/TapShape/TBottomLeft
+@onready var t_bottom_right: Polygon2D = $Shape/TapShape/TBottomRight
 
-@onready var drag_shape: Node2D = $MoveCurve/PathFollow2D/Shape/DragShape
-@onready var d_body: Polygon2D = $MoveCurve/PathFollow2D/Shape/DragShape/DBody
+@onready var drag_shape: Node2D = $Shape/DragShape
+@onready var d_body: Polygon2D = $Shape/DragShape/DBody
 
-@onready var hold_shape: Node2D = $MoveCurve/PathFollow2D/Shape/HoldShape
-@onready var h_body: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HBody
-@onready var h_right: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HRight
-@onready var h_top: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HTop
-@onready var h_left: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HLeft
-@onready var h_bottom: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HBottom
-@onready var h_top_right: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HTopRight
-@onready var h_top_left: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HTopLeft
-@onready var h_bottom_left: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HBottomLeft
-@onready var h_bottom_right: Polygon2D = $MoveCurve/PathFollow2D/Shape/HoldShape/HBottomRight
+@onready var hold_shape: Node2D = $Shape/HoldShape
+@onready var h_body: Polygon2D = $Shape/HoldShape/HBody
+@onready var h_right: Polygon2D = $Shape/HoldShape/HRight
+@onready var h_top: Polygon2D = $Shape/HoldShape/HTop
+@onready var h_left: Polygon2D = $Shape/HoldShape/HLeft
+@onready var h_bottom: Polygon2D = $Shape/HoldShape/HBottom
+@onready var h_top_right: Polygon2D = $Shape/HoldShape/HTopRight
+@onready var h_top_left: Polygon2D = $Shape/HoldShape/HTopLeft
+@onready var h_bottom_left: Polygon2D = $Shape/HoldShape/HBottomLeft
+@onready var h_bottom_right: Polygon2D = $Shape/HoldShape/HBottomRight
 #endregion
 
 
@@ -87,7 +88,7 @@ enum State {##枚举当前状态，状态处理这里直接状态式编程，没
 @export var jugde_timing: Array##判定时机，以歌曲时间为参照
 @export var hold_release_timing: Array##hold这种键型的长按释放时机，以歌曲时间为参照
 @export var mf_z_index: int = -1##MfObject图层
-@export  var thickness: float = 30.0##图形样式的厚度。目前先设为不可变，默认30.0。
+@export  var thickness: float = 40.0##图形样式的厚度。目前先设为不可变，默认40.0。
 #@export var is_rotates: Array[float]##元素为歌曲时刻，表明PathFollow2D的rotates何时开启关闭，默认关闭
 #废弃思路：要得到中间断开的Curve，只能用多个Curve实现，这里使用数组；解决思路：直接用多个MfObject对各方面都方便
 ##MfObject_move_curve:Path2D##MfObject运动的位置Curve2D，用于Path2D类型的MfObject——当前的MoveCurve（此节点是由MfObject的move_curve赋值的）
@@ -100,14 +101,29 @@ enum State {##枚举当前状态，状态处理这里直接状态式编程，没
 
 
 
+
+
+
+
+
+
+
+
 func _ready() -> void:
+	visible = true
+	shape.visible = false
+	box_shape.visible = false
+	tap_shape.visible = false
+	drag_shape.visible = false
+	hold_shape.visible = false
 	set_process(false)#停止 _process()调用
 	set_physics_process(false)#停止 _physics_process()调用
 
-func _process(_delta: float) -> void:
-	curve_handling()
+#func _process(_delta: float) -> void:
+	#pass
 
 func _physics_process(_delta: float) -> void:
+	curve_handling()
 	judgment_state_detection()
 
 
@@ -116,6 +132,9 @@ func _physics_process(_delta: float) -> void:
 
 
 func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化（就是从对象池拿出来复用时的初始化），参数为要导入的MfObject的字典
+	
+	
+	
 	##主要值的初始化设置
 	mf_object_type = dictionary["mf_object_type"]
 	exist_period = dictionary["exist_period"]
@@ -132,15 +151,18 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 	opacity_curve = Extension.dictionary_to_curve(dictionary["opacity_curve"])
 	
 	
+	
+	
+	curve_handling()##先运行一帧此函数，先赋值一些值，防止闪一下原图形。
+	
+	
+	
+	
 	##其他初始化设置
-	box_shape.visible = false
-	tap_shape.visible = false
-	drag_shape.visible = false
-	hold_shape.visible = false
 	match  mf_object_type:
 		MfObjectType.BOX:
 			box_shape.z_index = 100 if mf_z_index == -1 else mf_z_index##设置不同MfObject对应图层，未设置mf_z_index将启用默认值。
-			box_shape.visible = true##mf_object_type分别对应的四种皮肤（默认为图形绘制降低性能要求）
+			box_shape.visible = true##mf_object_type分别对应的四种皮肤（性能上Sprite更好）
 		MfObjectType.TAP:
 			tap_shape.z_index = 200 if mf_z_index == -1 else mf_z_index
 			tap_shape.visible = true
@@ -150,6 +172,48 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 		MfObjectType.HOLD:
 			hold_shape.z_index = 200 if mf_z_index == -1 else mf_z_index
 			hold_shape.visible = true
+	
+	
+	#if track_player_latency_position > exist_period["start"] + 5:
+		#shape.visible = true
+	
+	
+	
+	
+	
+	set_process(true)
+	set_physics_process(true)
+	
+	shape.visible = true
+
+
+
+func reset():##回收到对象池时重置
+	#visible = false
+	shape.visible = false
+	box_shape.visible = false
+	tap_shape.visible = false
+	drag_shape.visible = false
+	hold_shape.visible = false
+	
+	
+	
+	set_process(false)      # 停止 _process 调用
+	set_physics_process(false)  # 停止 _physics_process 调用
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##形态、运动、触控区域 模块
@@ -162,18 +226,24 @@ var curve_size: Vector2##（传出量值）曲线插值长宽
 func curve_handling() -> void:##对curve进行实时线性插值并赋值给对应变量，控制MfObject的形态、运动、触控区域
 	track_player_latency_position = track_player.thread_track_player_latency_position##（重要）get_playback_position()更新较快，故赋值给临时变量保持各属性处于同一时刻。下面统一使用track_player_position这个时刻标准。
 	if move_curve.curve && progress_ratio_curve:
-		path_follow_2d.progress_ratio = progress_ratio_curve.sample(track_player_latency_position)
+		if track_player_latency_position > exist_period["start"]:
+			path_follow_2d.progress_ratio = progress_ratio_curve.sample(track_player_latency_position)
+			#shape.position = move_curve.curve.samplef(lerp(0, move_curve.curve.point_count, progress_ratio_curve.sample(track_player_latency_position)))
+		else:
+			#shape.position = move_curve.curve.samplef(0.0)
+			path_follow_2d.progress_ratio = 0.0
+		shape.position = path_follow_2d.position
 	else:
 		print("move_curve 或 progress_ratio_curve为空")
 	
 	if length_curve && width_curve:##长、宽，注意不是单纯缩放；另外注意，长宽以Box的内外图形间（Drag一样）为标准
-		##绘制MfObject图形
+		##mf_object皮肤（性能上Sprite更好，应废弃多边形绘制思路）绘制MfObject图形
 		#regions
-		var a: float = length_curve.sample(track_player_latency_position)#（临时变量）长
-		var b: float = width_curve.sample(track_player_latency_position)#（临时变量）宽
+		var a: float = length_curve.sample(track_player_latency_position if track_player_latency_position > exist_period["start"] else exist_period["start"])#（临时变量）长
+		var b: float = width_curve.sample(track_player_latency_position if track_player_latency_position > exist_period["start"] else exist_period["start"])#（临时变量）宽
 		var t: float = thickness#（重要）（设定）（临时变量）厚度
 		
-		curve_size = Vector2(a, b)##用于传出长宽数值
+		curve_size = Vector2(a, b)##（重要）用于传出长宽数值，现在判定模块用到了
 		
 		match  mf_object_type:
 			MfObjectType.BOX:
@@ -207,19 +277,19 @@ func curve_handling() -> void:##对curve进行实时线性插值并赋值给对�
 				h_bottom_left.polygon = [Vector2(- a / 2, b / 2), Vector2(- a / 2 + t, b / 2), Vector2(- a / 2 + t, b / 2 - t), Vector2(- a / 2, b / 2 - t)]
 				h_bottom_right.polygon = [Vector2(a / 2, b / 2), Vector2(a / 2, b / 2 - t), Vector2(a / 2 - t, b / 2 - t), Vector2(a / 2 - t, b / 2)]
 		#endregion
-		##TouchArea的碰撞体直接用Drag的图形
-		collision_polygon_2d.polygon = [Vector2(a / 2, - b / 2), Vector2(- a / 2, - b / 2), Vector2(- a / 2, b / 2), Vector2(a / 2, b / 2)]
+		###（触控判定换了思路，不用此了）TouchArea的碰撞体直接用Drag的图形
+		#collision_polygon_2d.polygon = [Vector2(a / 2, - b / 2), Vector2(- a / 2, - b / 2), Vector2(- a / 2, b / 2), Vector2(a / 2, b / 2)]
 	else:
 		print("length_curve 或 width_curve为空")
 		
 	if rotation_curve:
-		shape.rotation_degrees = rotation_curve.sample(track_player_latency_position)
-		collision_polygon_2d.rotation_degrees = shape.rotation_degrees
+		shape.rotation_degrees = rotation_curve.sample(track_player_latency_position if track_player_latency_position > exist_period["start"] else exist_period["start"])
+		#collision_polygon_2d.rotation_degrees = shape.rotation_degrees##（触控判定换了思路，不用此了）TouchArea的碰撞体直接用Drag的图形
 	else:
 		print("rotation_curve为空")
 	
 	if opacity_curve:
-		shape.modulate.a = opacity_curve.sample(track_player_latency_position)
+		shape.modulate.a = opacity_curve.sample(track_player_latency_position if track_player_latency_position > exist_period["start"] else exist_period["start"])
 	else:
 		print("opacity_curve为空")
 	
@@ -245,8 +315,8 @@ var hold_release_timing_index: int = 0##（重要）（标记）接下来要或�
 
 var add_to_tap_priority_index: int = 0##（重要）（标记）接下来要to_tap_priority的判定点
 
-var judge_timing_hit_score: Array##记录每次（Hold是看最终评分）判定的评分。（不要跟表示总分数的score混淆了）
-var hold_head_judge_timing_hit_score: Array##记录每次Hold头部判定的评分。（头部一判定就记录）(此并非最终评分，还得看尾判，再传入hold_release_timing_index)
+var judge_timing_hit_score: Array[HitJugdment.HitScore]##记录每次（Hold是看最终评分）判定的评分。（不要跟表示总分数的score混淆了）
+var hold_head_judge_timing_hit_score: Array[HitJugdment.HitScore]##记录每次Hold头部判定的评分。（头部一判定就记录）(此并非最终评分，还得看尾判，再传入hold_release_timing_index)
 
 func judgment_state_detection() -> void:##State检测
 	
@@ -317,27 +387,27 @@ func judgment_state_detection() -> void:##State检测
 ##判定评分后执行程序模块
 
 
-func mf_object_hit(hitscore: int):##打击判定到了
+func mf_object_hit(hit_score: HitJugdment.HitScore):##打击判定到了
 	match mf_object_type:
 		MfObjectType.TAP:
-			tap_mf_object_hit(hitscore)
+			tap_mf_object_hit(hit_score)
 		MfObjectType.DRAG:
-			drag_mf_object_hit(hitscore)
+			drag_mf_object_hit(hit_score)
 		MfObjectType.HOLD:##还要按状态分
 			if current_state == State.HOLD_IN:
-				hold_mf_object_hold_in_hit(hitscore)
+				hold_mf_object_hold_in_hit(hit_score)
 			if current_state == State.HOLD_KEEP:
-				hold_mf_object_hold_keep_hit(hitscore)
+				hold_mf_object_hold_keep_hit(hit_score)
 
 
-func mf_object_miss(hitscore: int):##MISS了（虽然知道判定的MISS，但还是按形式来吧）
+func mf_object_miss(hit_score: HitJugdment.HitScore):##MISS了（虽然知道判定的MISS，但还是按形式来吧）
 	match mf_object_type:
 		MfObjectType.TAP:
-			tap_mf_object_miss(hitscore)
+			tap_mf_object_miss(hit_score)
 		MfObjectType.DRAG:
-			drag_mf_object_miss(hitscore)
+			drag_mf_object_miss(hit_score)
 		MfObjectType.HOLD:##还要按状态分
-			hold_mf_object_miss(hitscore)
+			hold_mf_object_miss(hit_score)
 
 
 
@@ -347,11 +417,11 @@ func mf_object_miss(hitscore: int):##MISS了（虽然知道判定的MISS，但�
 
 ##各类型MfObject执行函数
 
-func tap_mf_object_hit(hitscore: int):##（被动调用）Tap类型MfObject被打击判定到了,自己要执行的程序（注意：Tap和Hold要分别执行）
+func tap_mf_object_hit(hit_score: HitJugdment.HitScore):##（被动调用）Tap类型MfObject被打击判定到了,自己要执行的程序（注意：Tap和Hold要分别执行）
 	hit_jugdment.remove_from_priority(self)
-	judge_timing_hit_score.push_back(hitscore)
+	judge_timing_hit_score.push_back(hit_score)
 	jugde_timing_index += 1
-	match hitscore:##根据打击判定评分执行各自程序
+	match hit_score:##根据打击判定评分执行各自程序
 		HitJugdment.HitScore.PERFECT:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
 		HitJugdment.HitScore.EARLY_GOOD:
@@ -370,9 +440,9 @@ func tap_mf_object_hit(hitscore: int):##（被动调用）Tap类型MfObject被�
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
-func tap_mf_object_miss(hitscore: int):##（被动调用）Tap类型MfObject被判定为MISS,自己要执行的程序（注意：Tap和Hold要分别执行）
+func tap_mf_object_miss(hit_score: HitJugdment.HitScore):##（被动调用）Tap类型MfObject被判定为MISS,自己要执行的程序（注意：Tap和Hold要分别执行）
 	hit_jugdment.remove_from_priority(self)
-	judge_timing_hit_score.push_back(hitscore)
+	judge_timing_hit_score.push_back(hit_score)
 	jugde_timing_index += 1
 	##根据打击判定MISS评分执行程序
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
@@ -386,9 +456,9 @@ func tap_mf_object_miss(hitscore: int):##（被动调用）Tap类型MfObject被�
 
 
 
-func drag_mf_object_hit(hitscore: int):##Drag类型MfObject被打击判定到了（虽然Drag打击判定到了肯定是PERFECT，但还是按形式来吧）
+func drag_mf_object_hit(hit_score: HitJugdment.HitScore):##Drag类型MfObject被打击判定到了（虽然Drag打击判定到了肯定是PERFECT，但还是按形式来吧）
 	hit_jugdment.remove_from_touch(self)
-	judge_timing_hit_score.push_back(hitscore)
+	judge_timing_hit_score.push_back(hit_score)
 	jugde_timing_index += 1
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
 	##检测所有打击判定点是否已结束
@@ -397,9 +467,9 @@ func drag_mf_object_hit(hitscore: int):##Drag类型MfObject被打击判定到了
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
-func drag_mf_object_miss(hitscore: int):##Drag类型MfObject被判定为MISS
+func drag_mf_object_miss(hit_score: HitJugdment.HitScore):##Drag类型MfObject被判定为MISS
 	hit_jugdment.remove_from_touch(self)
-	judge_timing_hit_score.push_back(hitscore)
+	judge_timing_hit_score.push_back(hit_score)
 	jugde_timing_index += 1
 	##根据打击判定MISS评分执行程序
 	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
@@ -414,11 +484,11 @@ func drag_mf_object_miss(hitscore: int):##Drag类型MfObject被判定为MISS
 
 
 
-func hold_mf_object_hold_in_hit(hitscore: int):##处于HOLD_IN的Hold类型MfObject被打击判定到了
+func hold_mf_object_hold_in_hit(hit_score: HitJugdment.HitScore):##处于HOLD_IN的Hold类型MfObject被打击判定到了
 	hit_jugdment.remove_from_priority(self)
-	hold_head_judge_timing_hit_score.push_back(hitscore)##Hold头部评分
+	hold_head_judge_timing_hit_score.push_back(hit_score)##Hold头部评分
 	jugde_timing_index += 1
-	match hitscore:##根据打击判定评分执行各自程序
+	match hit_score:##根据打击判定评分执行各自程序
 		HitJugdment.HitScore.PERFECT:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN PERFECT")
 		HitJugdment.HitScore.EARLY_GOOD:
@@ -432,23 +502,25 @@ func hold_mf_object_hold_in_hit(hitscore: int):##处于HOLD_IN的Hold类型MfObj
 		HitJugdment.HitScore.NOT:
 			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN LATE_BAD")
 	
-	print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_touch(self)")
+	#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " hit_jugdment.add_to_touch(self)")
 	hit_jugdment.add_to_touch(self)
 	current_state = State.HOLD_KEEP
 
 
-func hold_mf_object_hold_keep_hit(hitscore: int):##处于HOLD_KEEP的Hold类型MfObject被打击判定到了
-	##若还处于HOLD_KEEP
+func hold_mf_object_hold_keep_hit(hit_score: HitJugdment.HitScore):##处于HOLD_KEEP的Hold类型MfObject被打击判定到了
+	
 	if track_player.thread_track_player_latency_position < hold_release_timing[hold_release_timing_index] - game.bad_window:
+		##若还处于HOLD_KEEP
 		pass
-	##HOLD_KEEP结束
+	
 	else:
+		##HOLD_KEEP结束
 		hit_jugdment.remove_from_touch(self)
-		var hold_head_hitscore = hold_head_judge_timing_hit_score[-1]
-		judge_timing_hit_score.push_back(hold_head_hitscore)##（重要）若未MISS，则最终评分按头判的评分算。
+		var hold_head_hit_score = hold_head_judge_timing_hit_score[-1]
+		judge_timing_hit_score.push_back(hold_head_hit_score)##（重要）若未MISS，则最终评分按头判的评分算。
 		hold_release_timing_index += 1
 		current_state = State.NOT
-		match hold_head_hitscore:##根据打击判定评分执行各自程序
+		match hold_head_hit_score:##根据打击判定评分执行各自程序
 			HitJugdment.HitScore.PERFECT:
 				print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is PERFECT")
 			HitJugdment.HitScore.EARLY_GOOD:
@@ -465,26 +537,24 @@ func hold_mf_object_hold_keep_hit(hitscore: int):##处于HOLD_KEEP的Hold类型M
 		##检测所有打击判定点是否已结束
 		if judge_timing_hit_score.size() == jugde_timing.size():
 			is_hit_jugement_over = true
-			#print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
+			print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
 
 
-func hold_mf_object_miss(hitscore: int):##Hold类型MfObject被判定为MISS（注意要考虑两种原因MISS的情况）
+func hold_mf_object_miss(hit_score: HitJugdment.HitScore):##Hold类型MfObject被判定为MISS（注意要考虑两种原因MISS的情况）
 	if current_state == State.HOLD_IN:##情况1.未打击Hold头部
 		hit_jugdment.remove_from_priority(self)
-		hold_head_judge_timing_hit_score.push_back(hitscore)##Hold头部评分
+		hold_head_judge_timing_hit_score.push_back(hit_score)##Hold头部评分
 		jugde_timing_index += 1
-		judge_timing_hit_score.push_back(hitscore)##最终评分
+		judge_timing_hit_score.push_back(hit_score)##最终评分
 		hold_release_timing_index += 1
 		current_state = State.HOLD_IN_MISS
 		
 		##根据HOLD_IN_MISS评分执行程序
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is HOLD_IN MISS")
 
-	
-	
 	if current_state == State.HOLD_KEEP:##情况2.在尾判前释放
 		hit_jugdment.remove_from_touch(self)
-		judge_timing_hit_score.push_back(hitscore)
+		judge_timing_hit_score.push_back(hit_score)
 		hold_release_timing_index += 1
 		current_state = State.HOLD_KEEP_MISS
 		
@@ -492,12 +562,10 @@ func hold_mf_object_miss(hitscore: int):##Hold类型MfObject被判定为MISS（�
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, " is MISS")
 	
 	
-	
 	##检测所有打击判定点是否已结束
 	if judge_timing_hit_score.size() == jugde_timing.size():
 		is_hit_jugement_over = true
 		print("[MfObject]    ", track_player.thread_track_player_position, "   ", self, "    所有判定点已结束")
-
 
 
 

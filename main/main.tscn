@@ -1,11 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://dl4i5yjshwtbp"]
+[gd_scene load_steps=9 format=3 uid="uid://dl4i5yjshwtbp"]
 
+[ext_resource type="Script" uid="uid://ck1h4vvvk0lq5" path="res://script/main.gd" id="1_4dugh"]
 [ext_resource type="PackedScene" uid="uid://c1hf2xyw7njed" path="res://scene/mf_chart_scene.tscn" id="2_kfbq2"]
 [ext_resource type="Script" uid="uid://b8gmxclk4v43e" path="res://temp/temp.gd" id="3_4dugh"]
 [ext_resource type="AudioStream" uid="uid://c2hp5gvu2yd0l" path="res://assets/note_Sfx/MfTapSfx.wav" id="4_67ri8"]
+[ext_resource type="Script" uid="uid://dy07k6id6gyl7" path="res://temp_output/label1.gd" id="5_3wy1v"]
 [ext_resource type="AudioStream" uid="uid://2asiebxo05mi" path="res://assets/note_Sfx/MfDragSfx.wav" id="5_grrlh"]
+[ext_resource type="Script" uid="uid://bboxgccj7m5fi" path="res://temp_output/label_2.gd" id="6_kfbq2"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4dugh"]
+font_size = 96
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_4dugh")
 
 [node name="MfChartScene" parent="." instance=ExtResource("2_kfbq2")]
 
@@ -39,3 +46,14 @@ volume_db = 24.0
 bus = &"NoteSound"
 
 [node name="TempOutput" type="CanvasLayer" parent="."]
+
+[node name="Label1" type="Label" parent="TempOutput"]
+offset_right = 40.0
+offset_bottom = 23.0
+label_settings = SubResource("LabelSettings_4dugh")
+script = ExtResource("5_3wy1v")
+
+[node name="Label2" type="Label" parent="TempOutput"]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("6_kfbq2")

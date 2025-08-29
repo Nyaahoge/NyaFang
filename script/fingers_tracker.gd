@@ -1,4 +1,6 @@
-extends Node2D
+extends Node
+
+@onready var camera_2d: Camera2D = $"../../Camera2D"
 
 @onready var hit_jugdment: Node = $"../HitJugdment"
 @onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
@@ -18,7 +20,7 @@ func _input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	touch_action_fingers_states()
 	#print(hit_jugdment.tap_action_mf_objects_priority)
-	#print(fingers)
+	#print("[FingersTracker]    ", fingers)
 
 
 
@@ -32,20 +34,20 @@ func _physics_process(delta: float) -> void:
 var fingers: Array##（重要）所有触屏手指屏幕位置。下标对应引擎触控点事件的index，若某index无手指则为null。
 #func fingers_tracking_initialize() -> void:
 	#pass
-
 func fingers_tracking(event) -> void:##触屏就检测（检测到后手指坐标记录由 屏幕视图坐标 变换成的 世界坐标）
 	
 	##移动端
-	if event is InputEventScreenTouch and event.pressed:##添加新触控点。godot虽然说数组会自动扩展保证fingers空间足够，但声明时还是要初始化要填的位置为null，是因为有bug会自动判断类型。
-		while fingers.size() <= event.index:##保证fingers空间足够
-			fingers.push_back(null)
-	
-	if event is InputEventScreenTouch or event is InputEventScreenDrag:##更新触控点坐标
-		var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio##（重要）触控点的世界坐标（1获取事件坐标event.position为窗口屏幕坐标（左上角为(0，0)），2平移成中心为(0,0)的窗口屏幕坐标，3通过比例放缩为世界坐标）
-		fingers[event.index] = finger_position
-	
-	if event is InputEventScreenTouch and not event.pressed:##删除抬起的触控点
-		fingers[event.index] = null
+	if OS.get_name() == "Android":
+		if event is InputEventScreenTouch and event.pressed:##添加新触控点。godot虽然说数组会自动扩展保证fingers空间足够，但声明时还是要初始化要填的位置为null，是因为有bug会自动判断类型。
+			while fingers.size() <= event.index:##保证fingers空间足够
+				fingers.push_back(null)
+		
+		if event is InputEventScreenTouch or event is InputEventScreenDrag:##更新触控点坐标
+			var finger_position = view_to_chart_pos(event.position)
+			fingers[event.index] = finger_position
+		
+		if event is InputEventScreenTouch and not event.pressed:##删除抬起的触控点
+			fingers[event.index] = null
 	
 	
 	
@@ -54,7 +56,7 @@ func fingers_tracking(event) -> void:##触屏就检测（检测到后手指坐�
 	##PC端（调试）
 	if OS.get_name() == "Windows":
 		if Input.is_action_pressed("mouse_hold"):##更新触控点坐标
-			var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
+			var finger_position = view_to_chart_pos(event.position)
 			fingers = [finger_position]
 		else:
 			fingers = []
@@ -88,14 +90,22 @@ func tap_action_fingers_states(event: InputEvent):
 					#break
 				#i += 1
 	
+	##移动端
+	if OS.get_name() == "Android":
+		if event is InputEventScreenTouch:
+			if event.pressed:
+				#print("[FingersTracker]    ", track_player.thread_track_player_latency_position, "    手指按下")
+				var finger_position = view_to_chart_pos(event.position)
+				hit_jugdment.tap_action_hit_jugdment(finger_position)
+	
 	
 	
 	##PC端（调试）
 	if OS.get_name() == "Windows":
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-				print("[FingersTracker]    ", track_player.thread_track_player_latency_position, "    鼠标左键按下")
-				var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
+				#print("[FingersTracker]    ", track_player.thread_track_player_latency_position, "    鼠标左键按下")
+				var finger_position = view_to_chart_pos(event.position)
 				hit_jugdment.tap_action_hit_jugdment(finger_position)
 	
 	###PC端（调试）
@@ -123,10 +133,16 @@ func tap_action_fingers_states(event: InputEvent):
 ##touch动作手指触控MfObject判断模块（实时判断手指对MfObject的触控情况）（toush动作触控点把它碰到的键添加进数组后续访问）
 func touch_action_fingers_states():
 	hit_jugdment.touch_action_hit_jugdment()
-	
-	
-	
-	
-	
-	#is_in_mf_object()
-	pass
+
+
+
+
+
+
+
+
+func view_to_chart_pos(pos: Vector2) -> Vector2:##（工具）由（事件）视图位置变换为（世界）谱面位置（1获取事件坐标event.position为窗口屏幕坐标（左上角为(0，0)），2平移成中心为(0,0)的窗口屏幕坐标，3通过比例放缩为世界坐标）
+	if chart_view.is_expand_screen_aspect_ratio_more_than_view_aspect_ratio:
+		return (pos - chart_view.expand_viewport_size / 2) / chart_view.expand_screen_chart_ratio
+	else:
+		return (pos - chart_view.expand_viewport_size / 2) / chart_view.expand_screen_chart_ratio

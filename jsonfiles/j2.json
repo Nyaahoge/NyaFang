@@ -1,5 +1,5 @@
 {
-  "max_mf_object_count": 3,
+  "max_mf_object_count": 4,
   "mf_objects": [
 	{
 	  "MfObject_move_curve": {
@@ -201,7 +201,7 @@
 		  }
 		]
 	  },
-	  "thickness": 30.0,
+	  "thickness": 40.0,
 	  "width_curve": {
 		"bake_resolution": 100,
 		"max_domain": 60.0,
@@ -410,7 +410,7 @@
 		  }
 		]
 	  },
-	  "thickness": 30.0,
+	  "thickness": 40.0,
 	  "width_curve": {
 		"bake_resolution": 100,
 		"max_domain": 60.0,
@@ -587,7 +587,7 @@
 		  }
 		]
 	  },
-	  "thickness": 30.0,
+	  "thickness": 40.0,
 	  "width_curve": {
 		"bake_resolution": 100,
 		"max_domain": 60.0,
@@ -607,8 +607,211 @@
 		  }
 		]
 	  }
+	},
+	{
+	  "MfObject_move_curve": {
+		"bake_interval": 5.0,
+		"points": [
+		  {
+			"in": {
+			  "x": -247.505996704102,
+			  "y": -18.8306007385254
+			},
+			"out": {
+			  "x": 247.505996704102,
+			  "y": 18.8306007385254
+			},
+			"position": {
+			  "x": -1237.0,
+			  "y": -560.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": -56.49169921875,
+			  "y": -471.194000244141
+			},
+			"out": {
+			  "x": 56.49169921875,
+			  "y": 471.194000244141
+			},
+			"position": {
+			  "x": 1132.0,
+			  "y": -99.0
+			}
+		  },
+		  {
+			"in": {
+			  "x": 84.3078994750977,
+			  "y": -6.27686023712158
+			},
+			"out": {
+			  "x": -84.3078994750977,
+			  "y": 6.27686023712158
+			},
+			"position": {
+			  "x": -67.0,
+			  "y": 469.0
+			}
+		  }
+		]
+	  },
+	  "exist_period": {
+		"over": 80.0,
+		"start": 4.0
+	  },
+	  "hold_release_timing": [],
+	  "jugde_timing": [],
+	  "length_curve": {
+		"bake_resolution": 100,
+		"max_domain": 80.0,
+		"max_value": 1000.0,
+		"min_domain": 4.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 4.0,
+			  "y": 400.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 80.0,
+			  "y": 1000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "mf_object_type": 0,
+	  "mf_z_index": -1,
+	  "opacity_curve": {
+		"bake_resolution": 100,
+		"max_domain": 80.0,
+		"max_value": 1.0,
+		"min_domain": 4.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 4.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "progress_ratio_curve": {
+		"bake_resolution": 100,
+		"max_domain": 80.0,
+		"max_value": 1.0,
+		"min_domain": 4.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 4.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 80.0,
+			  "y": 1.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "rotation_curve": {
+		"bake_resolution": 100,
+		"max_domain": 80.0,
+		"max_value": 4000.0,
+		"min_domain": 4.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 4.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 20.0312004089355,
+			  "y": 4000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 80.0,
+			  "y": 0.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  },
+	  "thickness": 40.0,
+	  "width_curve": {
+		"bake_resolution": 100,
+		"max_domain": 80.0,
+		"max_value": 1000.0,
+		"min_domain": 4.0,
+		"min_value": 0.0,
+		"points": [
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 4.0,
+			  "y": 400.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  },
+		  {
+			"left_mode": 0,
+			"left_tangent": 0.0,
+			"position": {
+			  "x": 80.0,
+			  "y": 1000.0
+			},
+			"right_mode": 0,
+			"right_tangent": 0.0
+		  }
+		]
+	  }
 	}
   ],
-  "sum_mf_object_count": 3,
+  "sum_mf_object_count": 4,
   "sum_mf_object_judgment_count": 11
 }

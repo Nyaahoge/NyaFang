@@ -27,14 +27,15 @@ func initialize() -> void:
 		create_objects()
 
 
-func create_objects() -> void:##预创建对象并添加到场景树
+func create_objects() -> void:##预创建对象
 	
 	var obj = obj_scene.instantiate()
 	if obj:
 		#obj.name = "MfObject_" + str(mf_objects.get_child_count())
-		obj.set_process(false)#停止 _process()调用
-		obj.set_physics_process(false)#停止 _physics_process()调用
-		obj.hide()#隐藏预创建的对象
+		#（重要）帧函数脚本禁用ready内已设置
+		#obj.set_process(false)#停止 _process()调用
+		#obj.set_physics_process(false)#停止 _physics_process()调用
+		#obj.shape.hide()#隐藏预创建的对象
 		#mf_objects.add_child(obj)
 		free_mf_objects.append(obj)
 	else:
@@ -47,9 +48,7 @@ func get_object() -> Object:##（外部调用）取出对象
 		var obj = free_mf_objects.pop_back()#取出空闲对象
 		mf_objects.add_child(obj)
 		obj.name = "MfObject"
-		# 恢复节点的处理逻辑
-		obj.set_process(true)
-		obj.set_physics_process(true)
+		#（重要）恢复节点的处理逻辑，在节点脚本的initialize内实现
 		
 		return obj#返回可用对象
 	elif mf_objects_initial_size == -1 or free_mf_objects.size() < mf_objects_initial_size:
@@ -63,8 +62,9 @@ func return_object(obj: Object) -> void:##（外部调用）回收对象
 	if obj and (mf_objects_initial_size == -1 or free_mf_objects.size() < mf_objects_initial_size):
 		#obj.is_need_show = true
 		obj.hide()
-		obj.set_process(false)      # 停止 _process 调用
-		obj.set_physics_process(false)  # 停止 _physics_process 调用
+		#（重要）帧函数脚本禁用reset内设置
+		#obj.set_process(false)      # 停止 _process 调用
+		#obj.set_physics_process(false)  # 停止 _physics_process 调用
 		mf_objects.remove_child(obj)
 		free_mf_objects.append(obj)
 	else:

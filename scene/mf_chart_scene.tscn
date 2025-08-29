@@ -26,7 +26,7 @@ script = ExtResource("8_qkehe")
 [node name="Player" type="Node" parent="Game"]
 script = ExtResource("8_b2fbt")
 
-[node name="FingersTracker" type="Node2D" parent="Game"]
+[node name="FingersTracker" type="Node" parent="Game"]
 script = ExtResource("10_h35d7")
 
 [node name="HitJugdment" type="Node" parent="Game"]

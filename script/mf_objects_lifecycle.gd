@@ -54,7 +54,7 @@ func _audio_thread() -> void:##（重要）子线程
 		
 		OS.delay_msec(0)#（重要）改变检测频率
 		
-		var a = track_player.get_playback_position()
+		var a = track_player.thread_track_player_position
 		mutex.lock()
 		if not thread_track_player_position == a:
 			thread_track_player_position = a
@@ -76,7 +76,7 @@ func chack_get_mf_object() -> void:##检查是否要从对象池里获取MfObjec
 	mutex.lock()#包围的代码称为临界区，同一时间只能有一个线程进入临界区。通过锁机制，确保对共享资源的修改是串行化的，避免并发冲突。主线程和子线程分别为两个线程都需要在各自操作共享资源部分加锁。
 	
 	if track_player.playing:
-		while mf_objects_index + 1 < json_file_operator.chart_data["sum_mf_object_count"] && (thread_track_player_position - game.latency_adjustment) >= json_file_operator.chart_data["mf_objects"][mf_objects_index + 1]["exist_period"]["start"]:
+		while mf_objects_index + 1 < json_file_operator.chart_data["sum_mf_object_count"] && (thread_track_player_position - game.latency_adjustment) > json_file_operator.chart_data["mf_objects"][mf_objects_index + 1]["exist_period"]["start"]:
 			will_get_objects.push_back(mf_objects_index + 1)
 			mf_objects_index += 1
 			#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  要添加", "一个MfObject")
@@ -109,11 +109,9 @@ func _get_mf_object_go_to_main_thread() -> void:
 	while will_get_objects.size() > 0:
 		var mf_obj = mf_object_pool.get_object()
 		mutex.lock()
-		
-		mf_obj.initialize(json_file_operator.chart_data["mf_objects"][will_get_objects.pop_front()])#初始化对象
 		current_mf_objects.push_back(mf_obj)
-		mf_obj.curve_handling()##先运行一帧此函数，先赋值一些值，防止闪一下原图形。
-		mf_obj.show()#显示对象（如果之前被隐藏）
+		mf_obj.initialize(json_file_operator.chart_data["mf_objects"][will_get_objects.pop_front()])#初始化对象
+		
 		
 		#print("[MfObjectLifecycle]    ", (thread_track_player_position), "  添加成功  ", mf_obj)
 		mutex.unlock()
@@ -123,7 +121,7 @@ func _return_mf_object_go_to_main_thread() -> void:
 	mutex.lock()
 	while will_return_objects.size() > 0:
 		var mf_obj = will_return_objects.pop_front()
-		
+		mf_obj.reset()
 		current_mf_objects.erase(mf_obj)
 		mf_object_pool.return_object(mf_obj)#回收
 		
