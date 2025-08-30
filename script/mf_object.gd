@@ -152,9 +152,9 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 	
 	
 	
-	
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", shape.visible, shape.position)
 	curve_handling()##先运行一帧此函数，先赋值一些值，防止闪一下原图形。
-	
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", shape.visible, shape.position)
 	
 	
 	
@@ -180,11 +180,12 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 	
 	
 	
-	
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", shape.visible, shape.position)
 	set_process(true)
 	set_physics_process(true)
 	
 	shape.visible = true
+	print("[MfObject]    ", track_player.thread_track_player_position, "   ", shape.visible, shape.position)
 
 
 
@@ -277,6 +278,18 @@ func curve_handling() -> void:##对curve进行实时线性插值并赋值给对�
 				h_bottom_left.polygon = [Vector2(- a / 2, b / 2), Vector2(- a / 2 + t, b / 2), Vector2(- a / 2 + t, b / 2 - t), Vector2(- a / 2, b / 2 - t)]
 				h_bottom_right.polygon = [Vector2(a / 2, b / 2), Vector2(a / 2, b / 2 - t), Vector2(a / 2 - t, b / 2 - t), Vector2(a / 2 - t, b / 2)]
 		#endregion
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		###（触控判定换了思路，不用此了）TouchArea的碰撞体直接用Drag的图形
 		#collision_polygon_2d.polygon = [Vector2(a / 2, - b / 2), Vector2(- a / 2, - b / 2), Vector2(- a / 2, b / 2), Vector2(a / 2, b / 2)]
 	else:

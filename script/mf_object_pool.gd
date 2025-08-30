@@ -35,7 +35,7 @@ func create_objects() -> void:##预创建对象
 		#（重要）帧函数脚本禁用ready内已设置
 		#obj.set_process(false)#停止 _process()调用
 		#obj.set_physics_process(false)#停止 _physics_process()调用
-		#obj.shape.hide()#隐藏预创建的对象
+		obj.hide()#隐藏预创建的对象
 		#mf_objects.add_child(obj)
 		free_mf_objects.append(obj)
 	else:
