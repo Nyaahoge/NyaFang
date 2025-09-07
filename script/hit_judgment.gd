@@ -1,4 +1,4 @@
-class_name HitJugdment##用于访问枚举
+class_name HitJudgment
 extends Node
 
 @onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
@@ -12,13 +12,13 @@ enum HitScore {##枚举打击评分（包括miss）
 	EARLY_BAD,
 	LATE_BAD,
 	MISS,
-	NOT
+	NOT##出现了意料之外的情况
 }
 
 #func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
-	#print("[HitJugdment]    ", tap_action_mf_objects_priority, "    ", touch_action_mf_objects)
+	#print("[HitJudgment]    ", tap_action_mf_objects_priority, "    ", touch_action_mf_objects)
 	check_priority_miss()
 	check_touch_miss()
 
@@ -32,8 +32,8 @@ var track_player_latency_position: float##考虑了谱面延迟的track时刻
 ##tap动作判定模块(tap动作：手指在屏幕上按下，是个瞬间性动作)
 #region
 ##tap动作的判定流程：
-##（1）每个MfObject自检测到判定点，把判定点上传到HitJugdment
-##（2）（注意是瞬间性动作）FingersTracker的触控函数调用HitJugdment的判定函数对判定点进行判定评分  或者  HitJugdment判定MISS函数检测出MISS判定点
+##（1）每个MfObject自检测到判定点，把判定点上传到HitJudgment
+##（2）（注意是瞬间性动作）FingersTracker的触控函数调用HitJudgment的判定函数对判定点进行判定评分  或者  HitJudgment判定MISS函数检测出MISS判定点
 ##（3）判定点评分调用MfObject的函数执行评分相应程序
 
 ##MfObject判定点排队模块（用于管理要判定的MfObject，进行排队）
@@ -44,7 +44,7 @@ func remove_from_priority(mf_object: MfObject):##移除
 	tap_action_mf_objects_priority.erase(mf_object)
 
 ##MfObject判定评分模块（被动调用，接收FingersTracker的点击触控信息，据此对MfObject进行判定）
-func tap_action_hit_jugdment(finger_position: Vector2):##tap动作的判定
+func tap_action_hit_judgment(finger_position: Vector2):##tap动作的判定
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	for i in range(tap_action_mf_objects_priority.size()):##遍历检查待判定MfObject（注意：tap动作对最早判定点起作用后就消耗了不会再次判定其他判定点）
 		var mf_obj = tap_action_mf_objects_priority[i]
@@ -58,8 +58,8 @@ func check_priority_miss():##每帧主动检测tap_action_mf_objects_priority内
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	for i in range(tap_action_mf_objects_priority.size()):##遍历检查待判定MfObject
 		var mf_obj = tap_action_mf_objects_priority[i]
-		var jugde_timing = mf_obj.jugde_timing[mf_obj.jugde_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
-		if jugde_timing + game.bad_window < track_player_latency_position:##判定为MISS
+		var judge_timing = mf_obj.judge_timing[mf_obj.judge_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
+		if judge_timing + game.bad_window < track_player_latency_position:##判定为MISS
 			mf_obj.mf_object_miss(HitScore.MISS)
 			pass#hold_in
 		i += 1
@@ -82,7 +82,7 @@ func add_to_touch(mf_object: MfObject):##添加
 func remove_from_touch(mf_object: MfObject):##移除
 	touch_action_mf_objects.erase(mf_object)
 
-func touch_action_hit_jugdment():
+func touch_action_hit_judgment():
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
 	for i in range(touch_action_mf_objects.size()):##遍历检查待判定MfObject（注意：touch动作会同时对所有被判定的判定点起作用）
 		var mf_obj = touch_action_mf_objects[i]
@@ -105,12 +105,12 @@ func check_touch_miss():##每帧主动检测touch_action_mf_objects内所有 非
 		if mf_obj.mf_object_type == MfObject.MfObjectType.HOLD:##此判定函数需要非Hold，Hold需要专门函数
 			i += 1
 			continue
-		var jugde_timing = mf_obj.jugde_timing[mf_obj.jugde_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
-		if jugde_timing + game.bad_window < track_player_latency_position:##判定为MISS
+		var judge_timing = mf_obj.judge_timing[mf_obj.judge_timing_index]##此判定点的时刻,注意：此时后面同一MfObject的判定点仍跟前面这个时刻一样，不过按顺序来不会判定到。
+		if judge_timing + game.bad_window < track_player_latency_position:##判定为MISS
 			mf_obj.mf_object_miss(HitScore.MISS)
 		i += 1
 
-#func hold_touch_action_hit_jugdment(mf_obj: MfObject):##每帧主动检测touch_action_mf_objects内所有 Hold ，哪些MISS了，每帧判断是否按着
+#func hold_touch_action_hit_judgment(mf_obj: MfObject):##每帧主动检测touch_action_mf_objects内所有 Hold ，哪些MISS了，每帧判断是否按着
 	#var hold_release_timing = mf_obj.hold_release_timing[mf_obj.hold_release_timing_index]
 
 
@@ -128,21 +128,21 @@ func is_in_mf_object(pos: Vector2, mf_obj: MfObject) -> bool:##（工具）（�
 
 func judge_hit_score(mf_object: MfObject) -> HitScore:##（工具）判定打击评分。TouchArea检测到触控可通过   数组 或 参数  转递信息（动作时刻）到此集中处理，根据不同State自动条件判断为不同动作。
 	track_player_latency_position = track_player.thread_track_player_latency_position##（更新值）
-	var jugde_timing = mf_object.jugde_timing[mf_object.jugde_timing_index]##此判定点的时刻
+	var judge_timing = mf_object.judge_timing[mf_object.judge_timing_index]##此判定点的时刻
 	
-	if jugde_timing - game.perfect_window <= track_player_latency_position && track_player_latency_position <= jugde_timing + game.perfect_window:
+	if judge_timing - game.perfect_window <= track_player_latency_position && track_player_latency_position <= judge_timing + game.perfect_window:
 		return HitScore.PERFECT
 		
-	if jugde_timing - game.good_window <= track_player_latency_position && track_player_latency_position < jugde_timing - game.perfect_window:
+	if judge_timing - game.good_window <= track_player_latency_position && track_player_latency_position < judge_timing - game.perfect_window:
 		return HitScore.EARLY_GOOD
 	
-	if jugde_timing + game.perfect_window < track_player_latency_position && track_player_latency_position <= jugde_timing + game.good_window:
+	if judge_timing + game.perfect_window < track_player_latency_position && track_player_latency_position <= judge_timing + game.good_window:
 		return HitScore.LATE_GOOD
 	
-	if track_player_latency_position < jugde_timing - game.good_window:
+	if track_player_latency_position < judge_timing - game.good_window:
 		return HitScore.EARLY_BAD
 	
-	if jugde_timing + game.good_window < track_player_latency_position:
+	if judge_timing + game.good_window < track_player_latency_position:
 		return HitScore.LATE_BAD
-	print("[HitJugdment]    ", "NOT")
+	print("[HitJudgment]    ", "NOT")
 	return HitScore.NOT##意外值

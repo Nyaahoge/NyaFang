@@ -2,7 +2,7 @@ extends AudioStreamPlayer
 ##（自拟）使用子线程，专门用于 高精度时间 的程序。用于调用高精度get_playback_position()。（有些 地方不精确也没事，比如：是否在判定窗口，只要进入和出去的时刻对就算行）
 
 
-@onready var game: Game = $"../Game"
+@onready var game: Node2D = $"../Game"
 
 
 const await_time = 3##（重要）谱面开始前等待时间

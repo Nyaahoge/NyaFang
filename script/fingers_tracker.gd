@@ -2,7 +2,7 @@ extends Node
 
 @onready var camera_2d: Camera2D = $"../../Camera2D"
 
-@onready var hit_jugdment: Node = $"../HitJugdment"
+@onready var hit_judgment: HitJudgment = $"../HitJudgment"
 @onready var track_player: AudioStreamPlayer = $"../../TrackPlayer"
 @onready var chart_view: Node2D = $"../../ChartView"
 
@@ -19,7 +19,7 @@ func _input(event: InputEvent) -> void:
 	
 func _physics_process(delta: float) -> void:
 	touch_action_fingers_states()
-	#print(hit_jugdment.tap_action_mf_objects_priority)
+	#print(hit_judgment.tap_action_mf_objects_priority)
 	#print("[FingersTracker]    ", fingers)
 
 
@@ -81,11 +81,11 @@ func tap_action_fingers_states(event: InputEvent):
 		#if event.pressed:
 			#print("手指按下")
 			#var i: int = 0#（临时）
-			#while i < hit_jugdment.tap_action_mf_objects_priority.size():
-				#var mf_obj = hit_jugdment.tap_action_mf_objects_priority[i]
+			#while i < hit_judgment.tap_action_mf_objects_priority.size():
+				#var mf_obj = hit_judgment.tap_action_mf_objects_priority[i]
 				#if is_in_mf_object(event.position, mf_obj):
 					#print("in")
-					#hit_jugdment.remove_from_priority(mf_obj)
+					#hit_judgment.remove_from_priority(mf_obj)
 					#mf_obj.hit_jugement(track_player.thread_track_player_position)
 					#break
 				#i += 1
@@ -96,7 +96,7 @@ func tap_action_fingers_states(event: InputEvent):
 			if event.pressed:
 				#print("[FingersTracker]    ", track_player.thread_track_player_latency_position, "    手指按下")
 				var finger_position = view_to_chart_pos(event.position)
-				hit_jugdment.tap_action_hit_jugdment(finger_position)
+				hit_judgment.tap_action_hit_judgment(finger_position)
 	
 	
 	
@@ -106,7 +106,7 @@ func tap_action_fingers_states(event: InputEvent):
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 				#print("[FingersTracker]    ", track_player.thread_track_player_latency_position, "    鼠标左键按下")
 				var finger_position = view_to_chart_pos(event.position)
-				hit_jugdment.tap_action_hit_jugdment(finger_position)
+				hit_judgment.tap_action_hit_judgment(finger_position)
 	
 	###PC端（调试）
 	#if OS.get_name() == "Windows":
@@ -115,11 +115,11 @@ func tap_action_fingers_states(event: InputEvent):
 				#print("鼠标左键按下")
 				#var finger_position = (event.position - Vector2(chart_view.viewport_size) / 2) / chart_view.viewport_chart_ratio
 				#var i: int = 0#（临时）
-				#while i < hit_jugdment.tap_action_mf_objects_priority.size():
-					#var mf_obj = hit_jugdment.tap_action_mf_objects_priority[i]
+				#while i < hit_judgment.tap_action_mf_objects_priority.size():
+					#var mf_obj = hit_judgment.tap_action_mf_objects_priority[i]
 					#if is_in_mf_object(finger_position, mf_obj):##注意把事件位置变换成世界坐标
 						#print("in")
-						#hit_jugdment.remove_from_priority(mf_obj)
+						#hit_judgment.remove_from_priority(mf_obj)
 						#mf_obj.hit_jugement(track_player.thread_track_player_position)
 						#break
 					#i += 1
@@ -132,7 +132,7 @@ func tap_action_fingers_states(event: InputEvent):
 	
 ##touch动作手指触控MfObject判断模块（实时判断手指对MfObject的触控情况）（toush动作触控点把它碰到的键添加进数组后续访问）
 func touch_action_fingers_states():
-	hit_jugdment.touch_action_hit_jugdment()
+	hit_judgment.touch_action_hit_judgment()
 
 
 

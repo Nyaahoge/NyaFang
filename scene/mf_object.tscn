@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c2qhse11rvirg"]
+[gd_scene load_steps=2 format=3 uid="uid://c2qhse11rvirg"]
 
 [ext_resource type="Script" uid="uid://cqdfudhslosqf" path="res://script/mf_object.gd" id="1_0dxp5"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_cl8rn"]
 
 [node name="MfObject" type="Node2D"]
 script = ExtResource("1_0dxp5")
@@ -13,164 +11,82 @@ script = ExtResource("1_0dxp5")
 rotates = false
 loop = false
 
-[node name="Shape" type="Node2D" parent="."]
+[node name="Shape" type="Node2D" parent="MoveCurve/PathFollow2D"]
 modulate = Color(1, 1, 1, 0.705882)
 
-[node name="BoxShape" type="Node2D" parent="Shape"]
+[node name="BoxShape" type="Node2D" parent="MoveCurve/PathFollow2D/Shape"]
 
-[node name="BRight0" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BRight0" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.545098, 0.898039, 0.772549, 1)
 
-[node name="BTop0" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BTop0" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.545098, 0.898039, 0.772549, 1)
 
-[node name="BLeft0" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BLeft0" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.545098, 0.898039, 0.772549, 1)
 
-[node name="BBottom0" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BBottom0" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.545098, 0.898039, 0.772549, 1)
 
-[node name="BRight1" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BRight1" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.313726, 0.654902, 0.541176, 1)
 
-[node name="BTop1" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BTop1" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.313726, 0.654902, 0.541176, 1)
 
-[node name="BLeft1" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BLeft1" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.313726, 0.654902, 0.541176, 1)
 
-[node name="BBottom1" type="Polygon2D" parent="Shape/BoxShape"]
+[node name="BBottom1" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/BoxShape"]
 color = Color(0.313726, 0.654902, 0.541176, 1)
 
-[node name="TapShape" type="Node2D" parent="Shape"]
+[node name="TapShape" type="Node2D" parent="MoveCurve/PathFollow2D/Shape"]
 
-[node name="TBody" type="Polygon2D" parent="Shape/TapShape"]
+[node name="TBody" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/TapShape"]
 color = Color(0.627451, 1, 0.976471, 1)
 
-[node name="TTopRight" type="Polygon2D" parent="Shape/TapShape"]
+[node name="TTopRight" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/TapShape"]
 color = Color(0, 0.807843, 0.780392, 1)
 
-[node name="TTopLeft" type="Polygon2D" parent="Shape/TapShape"]
+[node name="TTopLeft" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/TapShape"]
 color = Color(0, 0.807843, 0.780392, 1)
 
-[node name="TBottomLeft" type="Polygon2D" parent="Shape/TapShape"]
+[node name="TBottomLeft" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/TapShape"]
 color = Color(0, 0.807843, 0.780392, 1)
 
-[node name="TBottomRight" type="Polygon2D" parent="Shape/TapShape"]
+[node name="TBottomRight" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/TapShape"]
 color = Color(0, 0.807843, 0.780392, 1)
 
-[node name="DragShape" type="Node2D" parent="Shape"]
+[node name="DragShape" type="Node2D" parent="MoveCurve/PathFollow2D/Shape"]
 
-[node name="DBody" type="Polygon2D" parent="Shape/DragShape"]
+[node name="DBody" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/DragShape"]
 color = Color(1, 1, 0.713726, 1)
 
-[node name="HoldShape" type="Node2D" parent="Shape"]
+[node name="HoldShape" type="Node2D" parent="MoveCurve/PathFollow2D/Shape"]
 
-[node name="HBody" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HBody" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(1, 0.862745, 1, 1)
 
-[node name="HRight" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HRight" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.85098, 0.67451, 0.92549, 1)
 
-[node name="HTop" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HTop" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.85098, 0.67451, 0.92549, 1)
 
-[node name="HLeft" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HLeft" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.85098, 0.67451, 0.92549, 1)
 
-[node name="HBottom" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HBottom" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.85098, 0.67451, 0.92549, 1)
 
-[node name="HTopRight" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HTopRight" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.945098, 0.74902, 0.984314, 1)
 
-[node name="HTopLeft" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HTopLeft" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.945098, 0.74902, 0.984314, 1)
 
-[node name="HBottomLeft" type="Polygon2D" parent="Shape/HoldShape"]
+[node name="HBottomLeft" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.945098, 0.74902, 0.984314, 1)
 
-[node name="HBottomRight" type="Polygon2D" parent="Shape/HoldShape"]
-color = Color(0.945098, 0.74902, 0.984314, 1)
-
-[node name="MeshShape" type="Node2D" parent="."]
-visible = false
-modulate = Color(1, 1, 1, 0.705882)
-
-[node name="BoxShape" type="Node2D" parent="MeshShape"]
-
-[node name="BRight0" type="MeshInstance2D" parent="MeshShape/BoxShape"]
-modulate = Color(0.545098, 0.898039, 0.772549, 1)
-mesh = SubResource("QuadMesh_cl8rn")
-
-[node name="BTop0" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.545098, 0.898039, 0.772549, 1)
-
-[node name="BLeft0" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.545098, 0.898039, 0.772549, 1)
-
-[node name="BBottom0" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.545098, 0.898039, 0.772549, 1)
-
-[node name="BRight1" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.313726, 0.654902, 0.541176, 1)
-
-[node name="BTop1" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.313726, 0.654902, 0.541176, 1)
-
-[node name="BLeft1" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.313726, 0.654902, 0.541176, 1)
-
-[node name="BBottom1" type="Polygon2D" parent="MeshShape/BoxShape"]
-color = Color(0.313726, 0.654902, 0.541176, 1)
-
-[node name="TapShape" type="Node2D" parent="MeshShape"]
-
-[node name="TBody" type="Polygon2D" parent="MeshShape/TapShape"]
-color = Color(0.627451, 1, 0.976471, 1)
-
-[node name="TTopRight" type="Polygon2D" parent="MeshShape/TapShape"]
-color = Color(0, 0.807843, 0.780392, 1)
-
-[node name="TTopLeft" type="Polygon2D" parent="MeshShape/TapShape"]
-color = Color(0, 0.807843, 0.780392, 1)
-
-[node name="TBottomLeft" type="Polygon2D" parent="MeshShape/TapShape"]
-color = Color(0, 0.807843, 0.780392, 1)
-
-[node name="TBottomRight" type="Polygon2D" parent="MeshShape/TapShape"]
-color = Color(0, 0.807843, 0.780392, 1)
-
-[node name="DragShape" type="Node2D" parent="MeshShape"]
-
-[node name="DBody" type="Polygon2D" parent="MeshShape/DragShape"]
-color = Color(1, 1, 0.713726, 1)
-
-[node name="HoldShape" type="Node2D" parent="MeshShape"]
-
-[node name="HBody" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(1, 0.862745, 1, 1)
-
-[node name="HRight" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.85098, 0.67451, 0.92549, 1)
-
-[node name="HTop" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.85098, 0.67451, 0.92549, 1)
-
-[node name="HLeft" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.85098, 0.67451, 0.92549, 1)
-
-[node name="HBottom" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.85098, 0.67451, 0.92549, 1)
-
-[node name="HTopRight" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.945098, 0.74902, 0.984314, 1)
-
-[node name="HTopLeft" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.945098, 0.74902, 0.984314, 1)
-
-[node name="HBottomLeft" type="Polygon2D" parent="MeshShape/HoldShape"]
-color = Color(0.945098, 0.74902, 0.984314, 1)
-
-[node name="HBottomRight" type="Polygon2D" parent="MeshShape/HoldShape"]
+[node name="HBottomRight" type="Polygon2D" parent="MoveCurve/PathFollow2D/Shape/HoldShape"]
 color = Color(0.945098, 0.74902, 0.984314, 1)

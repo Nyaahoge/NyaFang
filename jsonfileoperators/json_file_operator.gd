@@ -29,14 +29,13 @@ func _ready() -> void:
 
 
 var chart_data: Dictionary##谱面数据。存放返回的字典数据。
-func parse() -> Dictionary:
+func parse():
 	if is_work:
 		# 执行正向解析
 		var data = Extension.json_to_dictionary(file)
 		#print(data1)  # 打印解析后的字典数据
 		
 		chart_data = data
-		return data
 		
 	else:
 		return {}
@@ -60,7 +59,7 @@ func save_to_json_file() -> void:##保存为json文件。必须保持MfObject在
 		var dictionary_mf_object = {
 			"mf_object_type": i.mf_object_type,
 			"exist_period": i.exist_period,
-			"jugde_timing": i.jugde_timing,
+			"judge_timing": i.judge_timing,
 			"hold_release_timing": i.hold_release_timing,
 			"mf_z_index": i.mf_z_index,
 			"thickness": i.thickness,
@@ -127,7 +126,7 @@ func save_to_json_file() -> void:##保存为json文件。必须保持MfObject在
 	
 	var sum_mf_object_judgment_count: int = 0#谱面物量，MfObject判定次数总数，保存为json文件时附带进去
 	for i in node_mf_objects:
-		sum_mf_object_judgment_count += i.jugde_timing.size()
+		sum_mf_object_judgment_count += i.judge_timing.size()
 	
 	
 	

@@ -96,7 +96,7 @@
 		"start": 1.0
 	  },
 	  "hold_release_timing": [],
-	  "jugde_timing": [
+	  "judge_timing": [
 		3.75,
 		4.219,
 		4.687,
@@ -295,7 +295,7 @@
 		"start": 3.0
 	  },
 	  "hold_release_timing": [],
-	  "jugde_timing": [
+	  "judge_timing": [
 		7.5,
 		7.969,
 		8.437,
@@ -486,7 +486,7 @@
 	  "hold_release_timing": [
 		18.75
 	  ],
-	  "jugde_timing": [
+	  "judge_timing": [
 		16.875
 	  ],
 	  "length_curve": {
@@ -661,7 +661,7 @@
 		"start": 4.0
 	  },
 	  "hold_release_timing": [],
-	  "jugde_timing": [],
+	  "judge_timing": [],
 	  "length_curve": {
 		"bake_resolution": 100,
 		"max_domain": 80.0,

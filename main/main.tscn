@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://bboxgccj7m5fi" path="res://temp_output/label_2.gd" id="6_kfbq2"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4dugh"]
-font_size = 96
+font_size = 64
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_4dugh")
@@ -47,7 +47,7 @@ bus = &"NoteSound"
 
 [node name="TempOutput" type="CanvasLayer" parent="."]
 
-[node name="Label1" type="Label" parent="TempOutput"]
+[node name="FPS" type="Label" parent="TempOutput"]
 offset_right = 40.0
 offset_bottom = 23.0
 label_settings = SubResource("LabelSettings_4dugh")

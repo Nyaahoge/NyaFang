@@ -134,7 +134,6 @@ exist_period = {
 "over": 60.0,
 "start": 1.0
 }
-jugde_timing = [3.75, 4.219, 4.687, 5.156, 5.625]
 progress_ratio_curve = SubResource("Curve_igr8s")
 length_curve = SubResource("Curve_fnjaa")
 width_curve = SubResource("Curve_omrs2")
@@ -153,7 +152,6 @@ exist_period = {
 "over": 60.0,
 "start": 3.0
 }
-jugde_timing = [7.5, 7.969, 8.437, 8.906, 9.375]
 progress_ratio_curve = SubResource("Curve_lriw2")
 length_curve = SubResource("Curve_uk6l5")
 width_curve = SubResource("Curve_25xxw")
@@ -172,7 +170,6 @@ exist_period = {
 "over": 60.0,
 "start": 3.0
 }
-jugde_timing = [16.875]
 hold_release_timing = [18.75]
 progress_ratio_curve = SubResource("Curve_kfhy5")
 length_curve = SubResource("Curve_03khn")
