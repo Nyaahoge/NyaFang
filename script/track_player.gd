@@ -47,9 +47,9 @@ func _audio_thread() -> void:##（重要）子线程
 	while running:
 		
 		OS.delay_msec(0)#（重要）改变检测频率
-		var a = get_playback_position()##（临时）
+		var a = get_playback_position() + AudioServer.get_time_since_last_mix() - AudioServer.get_output_latency()##（临时）
 		mutex.lock()
-		if not thread_track_player_position == a:##get_playback_position()更新了
+		if not thread_track_player_position >= a:##get_playback_position()更新了
 			thread_track_player_position = a
 			update_thread_track_player_latency_position()
 			

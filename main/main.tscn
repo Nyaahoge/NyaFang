@@ -20,30 +20,26 @@ script = ExtResource("1_4dugh")
 script = ExtResource("3_4dugh")
 
 [node name="ButtonTap" type="Button" parent="Temp"]
-visible = false
-offset_left = -213.0
-offset_top = -133.0
-offset_right = -1.0
-offset_bottom = 52.0
+offset_left = -634.0
+offset_top = -290.0
+offset_right = -34.0
+offset_bottom = 310.0
 text = "Tap"
 
 [node name="ButtonDrag" type="Button" parent="Temp"]
-visible = false
-offset_left = 2.0
-offset_top = -132.0
-offset_right = 214.0
-offset_bottom = 53.0
+offset_left = 55.0
+offset_top = -276.0
+offset_right = 655.0
+offset_bottom = 324.0
 text = "Drag"
 
 [node name="AudioStreamPlayerTap" type="AudioStreamPlayer" parent="Temp"]
 stream = ExtResource("4_67ri8")
 volume_db = 15.0
-bus = &"NoteSound"
 
 [node name="AudioStreamPlayerDrag" type="AudioStreamPlayer" parent="Temp"]
 stream = ExtResource("5_grrlh")
 volume_db = 24.0
-bus = &"NoteSound"
 
 [node name="TempOutput" type="CanvasLayer" parent="."]
 

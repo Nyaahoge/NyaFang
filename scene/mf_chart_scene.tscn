@@ -15,11 +15,11 @@
 [ext_resource type="Script" uid="uid://uod7m1af6gxx" path="res://script/hud.gd" id="13_4o1oa"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4o1oa"]
-font_size = 80
+font_size = 64
 
 [sub_resource type="LabelSettings" id="LabelSettings_ggmc3"]
 font_size = 128
-font_color = Color(0.71517, 1, 0.533823, 1)
+font_color = Color(1, 0.8015, 0.604983, 1)
 
 [node name="MfChartScene" type="Node2D"]
 script = ExtResource("1_lhj4b")
@@ -30,6 +30,7 @@ script = ExtResource("6_xb0a0")
 
 [node name="Game" type="Node2D" parent="."]
 script = ExtResource("8_qkehe")
+latency_adjustment = 0.2
 
 [node name="Player" type="Node" parent="Game"]
 script = ExtResource("8_b2fbt")

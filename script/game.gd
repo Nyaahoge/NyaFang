@@ -125,22 +125,16 @@ func update_game_stats(hit_score: HitJudgment.HitScore):##（更新）
 	match hit_score:
 		HitJudgment.HitScore.PERFECT:
 			perfect_count += 1;hit_count += 1;combo += 1
-			
 		HitJudgment.HitScore.EARLY_GOOD:
 			good_count += 1;hit_count += 1;combo += 1
-			
 		HitJudgment.HitScore.LATE_GOOD:
 			good_count += 1;hit_count += 1;combo += 1
-			
 		HitJudgment.HitScore.EARLY_BAD:
 			bad_count += 1;hit_count += 1;combo = 0
-			
 		HitJudgment.HitScore.LATE_BAD:
 			bad_count += 1;hit_count += 1;combo = 0
-			
 		HitJudgment.HitScore.MISS:
 			miss_count += 1;hit_count += 1;combo = 0
-			
 		HitJudgment.HitScore.NOT:
 			combo = 0
 			
