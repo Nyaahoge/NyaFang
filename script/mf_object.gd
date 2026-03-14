@@ -110,8 +110,7 @@ enum State {##枚举当前状态，状态处理这里直接状态式编程，没
 
 
 func _ready() -> void:
-	visible = true
-	shape.visible = false
+	visible = false
 	box_shape.visible = false
 	tap_shape.visible = false
 	drag_shape.visible = false
@@ -184,14 +183,14 @@ func initialize(dictionary: Dictionary) -> void:##MfObject根据新值初始化�
 	set_process(true)
 	set_physics_process(true)
 	
-	shape.visible = true
+	await get_tree().process_frame##延迟一帧显示解决了出现会闪现问题
+	visible = true
 	#print("[MfObject]    ", track_player.thread_track_player_position, "   ", shape.visible, shape.position)
 
 
 
 func reset():##回收到对象池时重置
-	#visible = false
-	shape.visible = false
+	visible = false
 	box_shape.visible = false
 	tap_shape.visible = false
 	drag_shape.visible = false
